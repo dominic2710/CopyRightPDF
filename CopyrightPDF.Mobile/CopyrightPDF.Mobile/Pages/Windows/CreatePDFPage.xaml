@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="CopyrightPDF.Mobile.Pages.Windows.CreatePDFPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:CopyrightPDF.Mobile.ViewModels"
+    Title="CreatePDFPage"
+    Background="#2c3e50">
+    <ContentPage.BindingContext>
+        <viewModels:CreatePDFViewModel />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Margin="15" Spacing="10">
+        <Label
+            FontAttributes="Bold"
+            FontSize="18"
+            Text="Input File"
+            TextColor="#3498db" />
+
+        <HorizontalStackLayout>
+            <Entry
+                Margin="10,0,5,0"
+                Placeholder="Choose PDF file"
+                Text="{Binding InputFile}"
+                WidthRequest="400" />
+            <Button
+                Background="#3498db"
+                HeightRequest="35"
+                Text="..." />
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            Margin="0,15,0,0"
+            Spacing="10">
+            <Label
+                FontAttributes="Bold"
+                FontSize="18"
+                Text="Server (Google Sheet)"
+                TextColor="#3498db" />
+            <VerticalStackLayout Margin="10,0,0,0" Spacing="15">
+                <HorizontalStackLayout Spacing="20">
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="Client secret"
+                        VerticalOptions="Center"
+                        WidthRequest="140" />
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="{Binding ClientSecret}"
+                        VerticalOptions="Center"
+                        WidthRequest="225" />
+                    <Button
+                        Background="#3498db"
+                        HeightRequest="35"
+                        Text="..." />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="20">
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="Sheet ID"
+                        VerticalOptions="Center"
+                        WidthRequest="140" />
+                    <Entry
+                        Placeholder="Input sheet Id"
+                        Text="{Binding SheetId}"
+                        WidthRequest="285" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            Margin="0,15,0,0"
+            Spacing="10">
+            <Label
+                FontAttributes="Bold"
+                FontSize="18"
+                Text="Encryption options"
+                TextColor="#3498db" />
+            <VerticalStackLayout Margin="10,0,0,0" Spacing="15">
+                <HorizontalStackLayout Spacing="20">
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="Password"
+                        VerticalOptions="Center"
+                        WidthRequest="250" />
+                    <Entry
+                        FontSize="16"
+                        IsPassword="False"
+                        Text="{Binding Password}"
+                        WidthRequest="175" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="20">
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="Number of active devices"
+                        VerticalOptions="Center"
+                        WidthRequest="250" />
+                    <Picker FontSize="16" SelectedIndex="{Binding NumberOfActiveDevice}">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:Int16}">
+                                <x:Int16>1</x:Int16>
+                                <x:Int16>2</x:Int16>
+                                <x:Int16>3</x:Int16>
+                                <x:Int16>4</x:Int16>
+                                <x:Int16>5</x:Int16>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="20">
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="Expire date"
+                        VerticalOptions="Center"
+                        WidthRequest="250" />
+                    <DatePicker
+                        Date="{Binding ExpireDate}"
+                        FontSize="16"
+                        WidthRequest="175" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="20">
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="Prevent same OS"
+                        VerticalOptions="Center"
+                        WidthRequest="250" />
+                    <Switch IsToggled="{Binding PreventSameOS}" OnColor="Orange" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="20">
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="Prevent screenshot&#x0a;(Windows, Android)"
+                        VerticalOptions="Center"
+                        WidthRequest="250" />
+                    <Switch IsToggled="{Binding PreventScreenShot}" OnColor="Orange" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="20">
+                    <Label
+                        FontSize="15"
+                        HorizontalTextAlignment="Start"
+                        Text="Prevent print"
+                        VerticalOptions="Center"
+                        WidthRequest="250" />
+                    <Switch IsToggled="{Binding PreventPrint}" OnColor="Orange" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <Label
+            FontAttributes="Bold"
+            FontSize="18"
+            Text="Output File"
+            TextColor="#3498db" />
+
+        <HorizontalStackLayout>
+            <Entry
+                Margin="10,0,5,0"
+                Placeholder="Choose save file name"
+                Text="{Binding OutputFile}"
+                WidthRequest="400" />
+            <Button
+                Background="#3498db"
+                HeightRequest="35"
+                Text="..." />
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Margin="0,25,0,0" Spacing="20">
+            <Button
+                Background="#27ae60"
+                Text="Test Connection"
+                TextColor="White"
+                WidthRequest="150" />
+            <Button
+                Background="#2980b9"
+                Text="Encrypt"
+                TextColor="White"
+                WidthRequest="150" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

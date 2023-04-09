@@ -1,7 +1,21 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CopyRightPDF.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SpreadSheetId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">1ZpVSuHWlt50fyLp0jQn59GotXUB_XJ5WyVDt7k-5MKw</Value>
+    </Setting>
+    <Setting Name="DocumentSheetName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Documents</Value>
+    </Setting>
+    <Setting Name="LicenseSheetName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Licenses</Value>
+    </Setting>
+    <Setting Name="ClientSecretFileName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">crpdfapi-2238f50f130f.json</Value>
+    </Setting>
+    <Setting Name="OutputPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\PROGRAMINGS\GitRepos\CopyRightPDF\Test</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

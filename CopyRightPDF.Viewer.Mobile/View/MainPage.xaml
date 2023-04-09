@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="CopyRightPDF.Viewer.Mobile.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:CopyRightPDF.Viewer.Mobile"
+    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.PdfViewer;assembly=Syncfusion.Maui.PdfViewer">
+    <ContentPage.BindingContext>
+        <local:PdfViewerViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <Style TargetType="Button">
+            <Setter Property="BorderWidth" Value="0" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="FontFamily" Value="{OnPlatform iOS=PdfViewerIcon, MacCatalyst=PdfViewerIcon, Android=PdfViewerIcon.ttf#, WinUI=PdfViewerIcon.ttf#PdfViewerIcon}" />
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="TextColor" Value="#99000000" />
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Disabled">
+                            <VisualState.Setters>
+                                <Setter Property="TextColor" Value="#44000000" />
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <VisualState.Setters>
+                                <Setter Property="TextColor" Value="#99000000" />
+                                <Setter Property="BackgroundColor" Value="#0F000000" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid
+                Grid.Row="0"
+                BackgroundColor="#FFF6F6F6"
+                HeightRequest="40">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{OnPlatform Default=Auto, Android=1*, iOS=1*}" />
+                    <ColumnDefinition Width="{OnPlatform Default=*, Android=3*, iOS=3*}" />
+                    <ColumnDefinition Width="{OnPlatform Default=*, Android=1*, iOS=1*}" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    Margin="8,0,0,0"
+                    Command="{Binding OpenFileCommand}"
+                    HorizontalOptions="Start"
+                    IsVisible="{OnPlatform MacCatalyst=false}"
+                    PropertyChanged="Button_PropertyChanged"
+                    Text="&#xe700;" />
+                <HorizontalStackLayout
+                    Grid.Column="1"
+                    HorizontalOptions="{OnPlatform Default=End,
+                                                   Android=CenterAndExpand,
+                                                   iOS=CenterAndExpand}"
+                    Spacing="8">
+                    <Border
+                        Padding="{OnPlatform Android=5}"
+                        BackgroundColor="#FFFFFFFF"
+                        HeightRequest="{OnPlatform Android=30,
+                                                   WinUI=34,
+                                                   MacCatalyst=26,
+                                                   iOS=26}"
+                        Stroke="#66000000"
+                        StrokeShape="{OnPlatform Default=RoundRectangle 4,
+                                                 MacCatalyst=RoundRectangle 5,
+                                                 iOS=RoundRectangle 5}"
+                        StrokeThickness="1">
+                        <Entry
+                            x:Name="PageNumberEntry"
+                            Completed="PageNumberEntry_Completed"
+                            HeightRequest="{OnPlatform Default=24,
+                                                       Android=40}"
+                            HorizontalTextAlignment="Center"
+                            Keyboard="Numeric"
+                            MaxLength="4"
+                            Text="{Binding PageNumber}"
+                            TextChanged="PageNumberEntry_TextChanged"
+                            TextColor="Black"
+                            Unfocused="PageNumberEntry_Unfocused"
+                            VerticalOptions="Center"
+                            VerticalTextAlignment="Center"
+                            WidthRequest="40" />
+                    </Border>
+                    <Label
+                        HorizontalTextAlignment="Center"
+                        Text=" / "
+                        VerticalOptions="Center"
+                        VerticalTextAlignment="Center" />
+                    <Label
+                        Margin="0,0,4,0"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding PageCount}"
+                        VerticalOptions="Center"
+                        VerticalTextAlignment="Center" />
+                    <Button
+                        Margin="4,0,0,0"
+                        Command="{Binding Source={x:Reference PdfViewer}, Path=GoToPreviousPageCommand}"
+                        FontSize="16"
+                        IsEnabled="{Binding CanGoToPreviousPage}"
+                        PropertyChanged="Button_PropertyChanged"
+                        Text="&#xe702;" />
+                    <Button
+                        Margin="4,0,0,0"
+                        Command="{Binding Source={x:Reference PdfViewer}, Path=GoToNextPageCommand}"
+                        FontSize="16"
+                        IsEnabled="{Binding CanGoToNextPage}"
+                        PropertyChanged="Button_PropertyChanged"
+                        Text="&#xe701;" />
+                    <Rectangle
+                        Fill="#FF979797"
+                        HeightRequest="24"
+                        WidthRequest="2" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout
+                    Grid.Column="2"
+                    Margin="8,0,12,0"
+                    HorizontalOptions="{OnPlatform MacCatalyst=Start,
+                                                   iOS=End,
+                                                   Android=End,
+                                                   WinUI=Start}">
+                    <Button
+                        Margin="4,0,0,0"
+                        Command="{Binding ZoomOutCommand}"
+                        IsEnabled="{Binding CanZoomOut}"
+                        PropertyChanged="Button_PropertyChanged"
+                        Text="&#xe704;" />
+                    <Button
+                        Margin="4,0,0,0"
+                        Command="{Binding ZoomInCommand}"
+                        IsEnabled="{Binding CanZoomIn}"
+                        PropertyChanged="Button_PropertyChanged"
+                        Text="&#xe703;" />
+                </HorizontalStackLayout>
+            </Grid>
+            <Line
+                Grid.Row="1"
+                BackgroundColor="#33000000"
+                StrokeThickness="1" />
+            <syncfusion:SfPdfViewer
+                x:Name="PdfViewer"
+                Grid.Row="2"
+                DocumentSource="{Binding PdfDocumentStream}"
+                MaxZoomFactor="{Binding MaxZoom, Mode=OneWayToSource}"
+                MinZoomFactor="{Binding MinZoom, Mode=OneWayToSource}"
+                PageCount="{Binding PageCount, Mode=OneWayToSource}"
+                PageNumber="{Binding PageNumber, Mode=OneWayToSource}"
+                ZoomFactor="{Binding CurrentZoom, Mode=TwoWay}" />
+            <ActivityIndicator
+                Grid.Row="2"
+                IsRunning="{Binding ShowRunning}"
+                Color="#2980b9" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

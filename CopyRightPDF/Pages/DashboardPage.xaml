@@ -1,0 +1,413 @@
+﻿<Window
+    x:Class="CopyRightPDF.Pages.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CopyRightPDF.Pages"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:CopyRightPDF.ViewModels"
+    Title="Copyright PDF - Writer"
+    Width="1600"
+    Height="1020"
+    Background="#FF252525"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <viewModel:DashboardViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <Style
+            x:Key="DataGridHeaderCenter"
+            BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}"
+            TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#FF2196F3" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="Segou UI" />
+        </Style>
+        <Style
+            x:Key="DataGridHeaderTransactionColumn"
+            BasedOn="{StaticResource DataGridHeaderCenter}"
+            TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="Green" />
+        </Style>
+        <Style
+            x:Key="ElementStyleVerticalCenter"
+            BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+            TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style
+            x:Key="DatagridCommonStyle"
+            BasedOn="{StaticResource MaterialDesignDataGrid}"
+            TargetType="DataGrid">
+            <Setter Property="materialDesign:DataGridAssist.CellPadding" Value="6" />
+            <Setter Property="materialDesign:DataGridAssist.ColumnHeaderPadding" Value="8" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="CanUserResizeColumns" Value="True" />
+            <Setter Property="CanUserResizeRows" Value="False" />
+            <Setter Property="CanUserSortColumns" Value="True" />
+            <Setter Property="ColumnHeaderStyle" Value="{StaticResource DataGridHeaderCenter}" />
+            <Setter Property="FontFamily" Value="Segou UI" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="GridLinesVisibility" Value="All" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+        </Style>
+        <Style BasedOn="{StaticResource MaterialDesignDataGridRow}" TargetType="DataGridRow">
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                    <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#2d3436" />
+                </Trigger>
+
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#3c6382" />
+                </Trigger>
+
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#3c6382" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
+            <Setter Property="FontFamily" Value="Segou UI" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <materialDesign:DialogHost>
+        <Grid Margin="15,0,15,15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="250" />
+                <RowDefinition Height="50" />
+                <RowDefinition />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,15,0,0"
+                VerticalAlignment="Center"
+                FontSize="20"
+                Foreground="#2980b9"
+                Text="Documents" />
+            <Button
+                Grid.Row="0"
+                Margin="0,15,0,0"
+                Padding="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                BorderBrush="Green"
+                Command="{Binding AddDocumentCommand}"
+                Foreground="Green"
+                Style="{StaticResource MaterialDesignToolButton}">
+                <materialDesign:PackIcon
+                    Width="24"
+                    Height="24"
+                    VerticalAlignment="Center"
+                    Foreground="Green"
+                    Kind="FileDocumentPlusOutline" />
+            </Button>
+            <DataGrid
+                Name="dtgDocuments"
+                Grid.Row="1"
+                Height="250"
+                Margin="0,5,0,0"
+                AlternationCount="2"
+                ColumnHeaderStyle="{StaticResource DataGridHeaderCenter}"
+                ItemsSource="{Binding DocumentsObservable}"
+                SelectedItem="{Binding SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectionMode="Single"
+                Style="{StaticResource DatagridCommonStyle}">
+                <DataGrid.InputBindings>
+                    <MouseBinding
+                        Command="{Binding EditDocumentCommand}"
+                        CommandParameter="{Binding ElementName=dtgDocuments, Path=SelectedItem}"
+                        Gesture="LeftDoubleClick" />
+                    <KeyBinding Key="Delete" Command="{Binding DeleteDocumentCommand}" />
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="Auto"
+                        Binding="{Binding FileId}"
+                        Header="File Id" />
+                    <DataGridTextColumn
+                        Width="Auto"
+                        Binding="{Binding FileName}"
+                        Header="File Name" />
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding Description}"
+                        Header="Decription" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock
+                Grid.Row="2"
+                Margin="0,15,0,0"
+                VerticalAlignment="Center"
+                FontSize="20"
+                Foreground="#2980b9"
+                Text="Licenses" />
+            <Button
+                Grid.Row="2"
+                Margin="0,15,0,0"
+                Padding="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                BorderBrush="Green"
+                Command="{Binding AddLicenseCommand}"
+                Foreground="Green"
+                Style="{StaticResource MaterialDesignToolButton}">
+                <materialDesign:PackIcon
+                    Width="24"
+                    Height="24"
+                    VerticalAlignment="Center"
+                    Foreground="Green"
+                    Kind="UserAdd" />
+            </Button>
+            <DataGrid
+                Name="dtgLicenses"
+                Grid.Row="3"
+                Margin="0,5,0,0"
+                AlternationCount="2"
+                ItemsSource="{Binding ElementName=dtgDocuments, Path=SelectedItem.Licenses, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{Binding SelectedLicense, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Style="{StaticResource DatagridCommonStyle}">
+                <DataGrid.InputBindings>
+                    <MouseBinding
+                        Command="{Binding EditLicenseCommand}"
+                        CommandParameter="{Binding ElementName=dtgLicenses, Path=SelectedItem}"
+                        Gesture="LeftDoubleClick" />
+                    <KeyBinding Key="Delete" Command="{Binding DeleteLicenseCommand}" />
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Binding="{Binding Status}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Status"
+                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                    <DataGridTextColumn
+                        Binding="{Binding CustomerName}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Customer"
+                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                    <DataGridTextColumn
+                        Binding="{Binding Password}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Password"
+                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                    <DataGridTextColumn
+                        Binding="{Binding NumberOfLimitDevice}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header=" Number Of&#x0a;Limit Device"
+                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                    <DataGridTemplateColumn Header="Prevent&#x0a;  Print" HeaderStyle="{StaticResource DataGridHeaderCenter}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid Visibility="{Binding PreventPrint, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Ellipse
+                                        Width="22"
+                                        Height="22"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Fill="#d35400" />
+                                    <materialDesign:PackIcon
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Kind="Check" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header=" Prevent&#x0a;Same OS" HeaderStyle="{StaticResource DataGridHeaderCenter}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid Visibility="{Binding PreventSameOS, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Ellipse
+                                        Width="20"
+                                        Height="20"
+                                        Fill="#2980b9" />
+                                    <materialDesign:PackIcon
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Kind="Check" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="   Prevent&#x0a;Screenshot" HeaderStyle="{StaticResource DataGridHeaderCenter}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid Visibility="{Binding PreventScreenshot, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Ellipse
+                                        Width="20"
+                                        Height="20"
+                                        Fill="#27ae60" />
+                                    <materialDesign:PackIcon
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Kind="Check" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <!--<DataGridCheckBoxColumn
+                    Binding="{Binding PreventPrint}"
+                    Header="Prevent&#x0a;  Print"
+                    HeaderStyle="{StaticResource DataGridHeaderCenter}">
+                    <DataGridCheckBoxColumn.ElementStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignActionCheckBox}" TargetType="CheckBox">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Setter Property="Visibility" Value="{Binding PreventPrint, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <Setter Property="Background" Value="#d35400" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                    </DataGridCheckBoxColumn.ElementStyle>
+                </DataGridCheckBoxColumn>
+                <DataGridCheckBoxColumn
+                    Binding="{Binding PreventSameOS}"
+                    Header=" Prevent&#x0a;Same OS"
+                    HeaderStyle="{StaticResource DataGridHeaderCenter}">
+                    <DataGridCheckBoxColumn.ElementStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignActionCheckBox}" TargetType="CheckBox">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Setter Property="Visibility" Value="{Binding PreventSameOS, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <Setter Property="Background" Value="#2980b9" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                    </DataGridCheckBoxColumn.ElementStyle>
+                </DataGridCheckBoxColumn>
+                <DataGridCheckBoxColumn
+                    Binding="{Binding PreventScreenshot}"
+                    Header="   Prevent&#x0a;Screenshot"
+                    HeaderStyle="{StaticResource DataGridHeaderCenter}">
+                    <DataGridCheckBoxColumn.ElementStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignActionCheckBox}" TargetType="CheckBox">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Setter Property="Visibility" Value="{Binding PreventScreenshot, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <Setter Property="Background" Value="#27ae60" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                    </DataGridCheckBoxColumn.ElementStyle>
+                </DataGridCheckBoxColumn>-->
+                    <DataGridTextColumn
+                        Binding="{Binding ExpireDate, StringFormat=dd/MM/yyyy}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Expiration Date"
+                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                    <DataGridTextColumn
+                        Binding="{Binding MinVersion}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Min Version"
+                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                    <DataGridTextColumn
+                        Binding="{Binding NumberOfActivatedDevice}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="    Number Of&#x0a;Activated Device"
+                        HeaderStyle="{StaticResource DataGridHeaderTransactionColumn}" />
+                    <DataGridTextColumn
+                        Binding="{Binding ActivatedDeviceMAC}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Activated MAC"
+                        HeaderStyle="{StaticResource DataGridHeaderTransactionColumn}" />
+                    <DataGridTextColumn
+                        Binding="{Binding ActivatedOS}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Activated OS"
+                        HeaderStyle="{StaticResource DataGridHeaderTransactionColumn}" />
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding LastAccess, StringFormat=dd/MM/yyyy HH:mm}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Last Access"
+                        HeaderStyle="{StaticResource DataGridHeaderTransactionColumn}" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <WrapPanel
+                Grid.Row="4"
+                Margin="0,15,0,0"
+                HorizontalAlignment="Right">
+                <Button
+                    Width="100"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding UpdateCommand}"
+                    Foreground="#FF2196F3"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="16"
+                            Height="16"
+                            VerticalAlignment="Center"
+                            Foreground="#FF2196F3"
+                            Kind="ContentSaveAllOutline" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="#FF2196F3"
+                            Text="Save" />
+                    </StackPanel>
+                </Button>
+
+                <Button
+                    Width="100"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    BorderBrush="#44bd32"
+                    Command="{Binding ReloadCommand}"
+                    Foreground="#44bd32"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="16"
+                            Height="16"
+                            VerticalAlignment="Center"
+                            Foreground="#44bd32"
+                            Kind="Reload" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="#44bd32"
+                            Text="Reload" />
+                    </StackPanel>
+                </Button>
+            </WrapPanel>
+            <materialDesign:Snackbar
+                Grid.Row="4"
+                Background="#0984e3"
+                Foreground="White"
+                MessageQueue="{Binding MessageQueue}" />
+        </Grid>
+    </materialDesign:DialogHost>
+</Window>

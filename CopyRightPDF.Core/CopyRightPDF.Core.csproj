@@ -51,6 +51,7 @@
     </Reference>
     <Reference Include="Google.Apis.Sheets.v4, Version=1.60.0.2979, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.Sheets.v4.1.60.0.2979\lib\net45\Google.Apis.Sheets.v4.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -66,8 +67,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AesOperation.cs" />
+    <Compile Include="CopyRightPDFDataProvider.cs" />
     <Compile Include="GoogleSheetDataAccess.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\DocumentModel.cs" />
+    <Compile Include="Models\LicenseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

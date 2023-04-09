@@ -39,65 +39,65 @@ namespace CopyRightPDF
         string ZipPassword = "1ZpVSuHWlt50fyLp0jQn59GotXUB_XJ5WyVDt7k";
         string EncryptKey = "b14ca5898a4e4133bbce2ea2315a1916";
         GoogleSheetDataAccess dataAccess;
-        
+
         private void btnCreate_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                string crPdfFileName;
-                var saveFileDialog = new SaveFileDialog
-                {
-                    Title = "Save CrPdf",
-                    FileName = Path.GetFileNameWithoutExtension(txtPdfFile.Text) + ".crpdf",
-                    Filter = "crpdf files (*.crpdf)|*.crpdf",
-                };
+            //try
+            //{
+            //    string crPdfFileName;
+            //    var saveFileDialog = new SaveFileDialog
+            //    {
+            //        Title = "Save CrPdf",
+            //        FileName = Path.GetFileNameWithoutExtension(txtPdfFile.Text) + ".crpdf",
+            //        Filter = "crpdf files (*.crpdf)|*.crpdf",
+            //    };
 
-                if (saveFileDialog.ShowDialog() != true) return;
-                crPdfFileName = saveFileDialog.FileName;
+            //    if (saveFileDialog.ShowDialog() != true) return;
+            //    crPdfFileName = saveFileDialog.FileName;
 
-                var newGuid = Guid.NewGuid();
-                ZipFile zipFile = new ZipFile
-                {
-                    Password = ZipPassword
-                };
+            //    var newGuid = Guid.NewGuid();
+            //    ZipFile zipFile = new ZipFile
+            //    {
+            //        Password = ZipPassword
+            //    };
 
-                using (FileStream fs = new FileStream(txtPdfFile.Text, FileMode.Open, FileAccess.Read))
-                {
-                    var fileByte = new byte[fs.Length];
-                    fs.Read(fileByte, 0, fileByte.Length);
+            //    using (FileStream fs = new FileStream(txtPdfFile.Text, FileMode.Open, FileAccess.Read))
+            //    {
+            //        var fileByte = new byte[fs.Length];
+            //        fs.Read(fileByte, 0, fileByte.Length);
 
-                    AddFileToZip(zipFile, "data.dat", fileByte);
-                }
+            //        AddFileToZip(zipFile, "data.dat", fileByte);
+            //    }
 
-                using (FileStream fs = new FileStream("crpdfapi-2238f50f130f.json", FileMode.Open))
-                {
-                    var fileByte2 = new byte[fs.Length];
-                    fs.Read(fileByte2, 0, fileByte2.Length);
+            //    using (FileStream fs = new FileStream("crpdfapi-2238f50f130f.json", FileMode.Open))
+            //    {
+            //        var fileByte2 = new byte[fs.Length];
+            //        fs.Read(fileByte2, 0, fileByte2.Length);
 
-                    AddFileToZip(zipFile, "server.dat", fileByte2);
-                }
+            //        AddFileToZip(zipFile, "server.dat", fileByte2);
+            //    }
 
-                var pwBuilder = new StringBuilder();
-                pwBuilder.AppendLine(newGuid.ToString());
-                pwBuilder.AppendLine(txtPassword.Text);
+            //    var pwBuilder = new StringBuilder();
+            //    pwBuilder.AppendLine(newGuid.ToString());
+            //    pwBuilder.AppendLine(txtPassword.Text);
 
-                AddFileToZip(zipFile, "info.dat", Encoding.ASCII.GetBytes(pwBuilder.ToString()));
+            //    AddFileToZip(zipFile, "info.dat", Encoding.ASCII.GetBytes(pwBuilder.ToString()));
 
-                zipFile.Save(crPdfFileName);
+            //    zipFile.Save(crPdfFileName);
 
-                var document = new DocumentModel
-                {
-                    DocumentId = newGuid.ToString(),
-                    Password = txtPassword.Text,
-                    NumberOfLimitDevice = "1",
-                    NumberOfActivatedDevice = "0",
-                };
-                dataAccess.CreateEntry(document);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Copy Right PDF");
-            }
+            //    var document = new DocumentModel
+            //    {
+            //        DocumentId = newGuid.ToString(),
+            //        Password = txtPassword.Text,
+            //        NumberOfLimitDevice = "1",
+            //        NumberOfActivatedDevice = "0",
+            //    };
+            //    dataAccess.CreateEntry(document);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message, "Copy Right PDF");
+            //}
         }
 
         void AddFileToZip(ZipFile zipFile, string entryName, byte[] data)
@@ -123,10 +123,10 @@ namespace CopyRightPDF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            using (FileStream fs = new FileStream("crpdfapi-2238f50f130f.json", FileMode.Open, FileAccess.Read))
-            {
-                dataAccess = new GoogleSheetDataAccess(fs);
-            }
+            //using (FileStream fs = new FileStream("crpdfapi-2238f50f130f.json", FileMode.Open, FileAccess.Read))
+            //{
+            //    dataAccess = new GoogleSheetDataAccess(fs);
+            //}
         }
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
@@ -142,7 +142,7 @@ namespace CopyRightPDF
 
             txtPdfFile.Text = openFileDialog.FileName;
 
-            FileStream pdfFileStream = new FileStream(txtPdfFile.Text, FileMode.Open, FileAccess.Read,FileShare.Read);
+            FileStream pdfFileStream = new FileStream(txtPdfFile.Text, FileMode.Open, FileAccess.Read, FileShare.Read);
             pdfViewer.OpenPdf(pdfFileStream);
             pdfViewer.SetZoomMode(PdfViewerZoomMode.FitWidth);
         }

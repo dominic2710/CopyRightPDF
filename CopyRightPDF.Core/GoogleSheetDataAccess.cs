@@ -3,6 +3,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,21 +18,9 @@ namespace CopyRightPDF.Core
         readonly string[] Scopes = { SheetsService.Scope.Spreadsheets };
         readonly string ApplicationName = "CrPdfApplication";
         readonly string SpreadSheetId = "1ZpVSuHWlt50fyLp0jQn59GotXUB_XJ5WyVDt7k-5MKw";
-        readonly string SheetName = "Data";
         SheetsService service;
 
-        enum DocumentEnum
-        {
-            RowId = 0,
-            DocumentId,
-            Password,
-            NumberOfLimitDevice,
-            NumberOfActivatedDevice,
-            ActivatedDevicesMAC,
-            LatestAccess,
-        }
-
-        public GoogleSheetDataAccess(Stream clientSecretStream)
+        public GoogleSheetDataAccess(Stream clientSecretStream, string spreadSheetId)
         {
             GoogleCredential credential = GoogleCredential.FromStream(clientSecretStream)
                                 .CreateScoped(Scopes);
@@ -41,14 +30,15 @@ namespace CopyRightPDF.Core
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName
             });
+
+            SpreadSheetId = spreadSheetId;
         }
 
-        public void CreateEntry(DocumentModel document)
+        public void CreateEntry(List<IList<object>> listData, string range)
         {
-            var range = $"{SheetName}!A:G";
             var valueRange = new ValueRange
             {
-                Values = new List<IList<object>> { document.ToList }
+                Values = listData
             };
 
             var appendRequest = service.Spreadsheets.Values.Append(valueRange, SpreadSheetId, range);
@@ -56,53 +46,36 @@ namespace CopyRightPDF.Core
             var appendResponse = appendRequest.Execute();
         }
 
-        public void UpdateEntry(DocumentModel document)
+        public void UpdateEntry(List<IList<object>> listData, string range)
         {
-            var rowId = int.Parse(document.RowId) + 1;
-            var range = $"{SheetName}!A{rowId}:G{rowId}";
             var valueRange = new ValueRange
             {
-                Values = new List<IList<object>> { document.ToList }
+                Values = listData
             };
 
             var updateRequest = service.Spreadsheets.Values.Update(valueRange, SpreadSheetId, range);
             updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             var appendResponse = updateRequest.Execute();
-
         }
 
-        public DocumentModel GetEntryByDocumentId(string documentId)
+        public void ClearAllDataExcludeFirstRow(string sheetName)
         {
-            var range = $"{SheetName}!A:G";
+            string range = $"{sheetName}!A2:ZZ";
+
+            // Create the ClearValuesRequest object to clear the values in the specified range.
+            SpreadsheetsResource.ValuesResource.ClearRequest clearRequest =
+                                        service.Spreadsheets.Values.Clear(new ClearValuesRequest(), SpreadSheetId, range);
+            ClearValuesResponse clearResponse = clearRequest.Execute();
+        }
+
+        public IList<IList<object>> GetEntry(string range)
+        {
             var request = service.Spreadsheets.Values.Get(SpreadSheetId, range);
 
             var response = request.Execute();
-            var values = response.Values;
-
-            if (values == null || values.Count == 0) return null;
-
-            var rows = values.Where(x => x[1].ToString() == documentId).ToList();
-            if (rows == null || rows.Count == 0) return null;
-
-            var row = rows[0];
-            return new DocumentModel
-            {
-                RowId = GetItem(row, DocumentEnum.RowId),
-                DocumentId = GetItem(row, DocumentEnum.DocumentId),
-                Password = GetItem(row, DocumentEnum.Password),
-                NumberOfLimitDevice = GetItem(row, DocumentEnum.NumberOfLimitDevice),
-                NumberOfActivatedDevice = GetItem(row, DocumentEnum.NumberOfActivatedDevice),
-                ActivatedDevicesMAC = GetItem(row, DocumentEnum.ActivatedDevicesMAC),
-                LatestAccess = GetItem(row, DocumentEnum.LatestAccess),
-            };
+            response.Values.RemoveAt(0);
+            return response.Values;
         }
 
-        private string GetItem(IList<object> items, DocumentEnum index)
-        {
-            if (items.Count > (int)index)
-                return items[(int)index].ToString();
-
-            return "";
-        }
     }
 }

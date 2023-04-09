@@ -31,7 +31,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-ios|AnyCPU'">
-	  <CreatePackage>false</CreatePackage>
+		<CreatePackage>false</CreatePackage>
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->
@@ -49,30 +49,32 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="PdfiumViewer" />
-	  <None Remove="PDFium.Viewer.WPF" />
-	  <None Remove="PdfSharpCore" />
-	  <None Remove="Syncfusion.Xamarin.SfPdfViewer" />
-	  <None Remove="Syncfusion.Maui.PdfViewer" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">
-	  <PackageReference Include="Pdfium.Xamarin.SDK" Version="1.0.2" />
+		<None Remove="Syncfusion.Xamarin.SfPdfViewer" />
+		<None Remove="Syncfusion.Maui.PdfViewer" />
 	</ItemGroup>
 	<ItemGroup>
-	  <EmbeddedResource Remove="Resources\Styles\Styles.xaml" />
-	  <EmbeddedResource Remove="Resources\Styles\Colors.xaml" />
+		<EmbeddedResource Remove="Resources\Styles\Styles.xaml" />
+		<EmbeddedResource Remove="Resources\Styles\Colors.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-	  <BundleResource Include="Resources\Styles\Styles.xaml">
-	    <SubType>Designer</SubType>
-	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-	  </BundleResource>
-	  <BundleResource Include="Resources\Styles\Colors.xaml">
-	    <SubType>Designer</SubType>
-	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-	  </BundleResource>
+		<BundleResource Include="Resources\Styles\Styles.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+		</BundleResource>
+		<BundleResource Include="Resources\Styles\Colors.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+		</BundleResource>
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Syncfusion.Maui.PdfViewer" Version="21.1.37" />
+		<PackageReference Include="Syncfusion.Maui.PdfViewer" Version="21.1.37" />
+	</ItemGroup>
+	<ItemGroup>
+		<MauiXaml Update="Pages\Windows\CreatePDFPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Windows\DashboardPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 	</ItemGroup>
 </Project>

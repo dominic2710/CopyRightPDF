@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="CopyRightPDF.Viewer.Mobile.Pages.InputDialog"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <StackLayout>
+        <Label Text="{Binding Title}" />
+        <Entry Text="{Binding InputText}" />
+        <StackLayout Orientation="Horizontal">
+            <Button Command="{Binding OkCommand}" Text="OK" />
+            <Button Command="{Binding CancelCommand}" Text="Cancel" />
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

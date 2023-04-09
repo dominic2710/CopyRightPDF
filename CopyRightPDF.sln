@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyRightPDF", "CopyRightPD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyRightPDF.Core", "CopyRightPDF.Core\CopyRightPDF.Core.csproj", "{8392D062-43F7-48F9-929B-31C9C05C387E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyRightPDF.Viewer", "CopyRightPDF.Viewer\CopyRightPDF.Viewer.csproj", "{739BE1AF-8E63-41E3-937C-60916AACD765}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyRightPDF.Viewer.Mobile", "CopyRightPDF.Viewer.Mobile\CopyRightPDF.Viewer.Mobile.csproj", "{6C7ED0FE-6EFC-49DA-89C2-89EBA63EC828}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,12 @@ Global
 		{8392D062-43F7-48F9-929B-31C9C05C387E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8392D062-43F7-48F9-929B-31C9C05C387E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8392D062-43F7-48F9-929B-31C9C05C387E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{739BE1AF-8E63-41E3-937C-60916AACD765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{739BE1AF-8E63-41E3-937C-60916AACD765}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{739BE1AF-8E63-41E3-937C-60916AACD765}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{739BE1AF-8E63-41E3-937C-60916AACD765}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C7ED0FE-6EFC-49DA-89C2-89EBA63EC828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C7ED0FE-6EFC-49DA-89C2-89EBA63EC828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C7ED0FE-6EFC-49DA-89C2-89EBA63EC828}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6C7ED0FE-6EFC-49DA-89C2-89EBA63EC828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C7ED0FE-6EFC-49DA-89C2-89EBA63EC828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C7ED0FE-6EFC-49DA-89C2-89EBA63EC828}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

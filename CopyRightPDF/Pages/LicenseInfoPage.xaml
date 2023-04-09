@@ -1,0 +1,269 @@
+﻿<Window
+    x:Class="CopyRightPDF.Pages.LicenseInfoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CopyRightPDF.Pages"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:CopyRightPDF.ViewModels"
+    Title="{Binding WindowTitle}"
+    Width="550"
+    Height="920"
+    Background="#2f3640"
+    FontFamily="Segou UI"
+    FontSize="14"
+    Foreground="White"
+    Loaded="Window_Loaded"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <viewModels:LicenseInfoViewModel />
+    </Window.DataContext>
+    <materialDesign:DialogHost>
+        <Grid>
+            <StackPanel Margin="15">
+                <WrapPanel>
+                    <TextBlock
+                        Width="200"
+                        Height="20"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Status"
+                        TextAlignment="Right" />
+                    <materialDesign:Chip
+                        Width="90"
+                        VerticalContentAlignment="Center"
+                        Background="{Binding Status, Converter={StaticResource StatusColorConverter}}"
+                        Content="{Binding Status, UpdateSourceTrigger=PropertyChanged}"
+                        FontSize="15"
+                        TextBlock.TextAlignment="Center" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Customer"
+                        TextAlignment="Right" />
+                    <TextBox
+                        Width="250"
+                        VerticalAlignment="Center"
+                        Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Password"
+                        TextAlignment="Right" />
+                    <TextBox
+                        Width="250"
+                        Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Number of Limit Device"
+                        TextAlignment="Right" />
+                    <ComboBox
+                        Width="80"
+                        HorizontalAlignment="Right"
+                        Style="{DynamicResource MaterialDesignOutlinedComboBox}"
+                        Text="{Binding NumberOfLimitDevice, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="5" />
+                        <ComboBoxItem Content="6" />
+                    </ComboBox>
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Prevent Print"
+                        TextAlignment="Right" />
+                    <ToggleButton
+                        Height="40"
+                        Background="#d35400"
+                        IsChecked="{Binding PreventPrint, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Prevent Same OS"
+                        TextAlignment="Right" />
+                    <ToggleButton
+                        Height="40"
+                        Background="#2980b9"
+                        IsChecked="{Binding PreventSameOS, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Prevent Screenshot"
+                        TextAlignment="Right" />
+                    <ToggleButton
+                        Height="40"
+                        Background="#27ae60"
+                        IsChecked="{Binding PreventScreenshot, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Expiration Date"
+                        TextAlignment="Right" />
+                    <DatePicker
+                        Width="150"
+                        SelectedDate="{Binding ExpireDate, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{DynamicResource MaterialDesignOutlinedDatePicker}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Minimum Version"
+                        TextAlignment="Right" />
+                    <TextBox
+                        Width="80"
+                        HorizontalContentAlignment="Right"
+                        Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding MinVersion, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Number of Activated Device"
+                        TextAlignment="Right" />
+                    <TextBox
+                        Width="80"
+                        HorizontalContentAlignment="Right"
+                        Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding NumberOfActivatedDevice, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Activated MAC"
+                        TextAlignment="Right" />
+                    <TextBox
+                        Width="250"
+                        Height="120"
+                        AcceptsReturn="True"
+                        Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding ActivatedDeviceMAC, UpdateSourceTrigger=PropertyChanged}"
+                        VerticalScrollBarVisibility="Auto" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Activated OS"
+                        TextAlignment="Right" />
+                    <TextBox
+                        Width="250"
+                        Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding ActivatedOS, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="0,15,0,10">
+                    <TextBlock
+                        Width="200"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        Text="Last Access"
+                        TextAlignment="Right" />
+                    <TextBlock
+                        Width="250"
+                        VerticalAlignment="Center"
+                        Text="{Binding LastAccess, StringFormat=dd/MM/yyyy HH:mm:ss, UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+
+                <WrapPanel Margin="215,20,0,0">
+                    <Button
+                        Width="100"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Command="{Binding OKCommand}"
+                        Foreground="#FF2196F3"
+                        Style="{StaticResource MaterialDesignOutlinedButton}">
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <materialDesign:PackIcon
+                                Width="16"
+                                Height="16"
+                                VerticalAlignment="Center"
+                                Foreground="#FF2196F3"
+                                Kind="Check" />
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="#FF2196F3"
+                                Text="OK" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Width="100"
+                        Margin="15,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        BorderBrush="#44bd32"
+                        Command="{Binding ReloadCommand}"
+                        Foreground="#44bd32"
+                        Style="{StaticResource MaterialDesignOutlinedButton}">
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <materialDesign:PackIcon
+                                Width="16"
+                                Height="16"
+                                VerticalAlignment="Center"
+                                Foreground="#44bd32"
+                                Kind="Reload" />
+                            <TextBlock
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="#44bd32"
+                                Text="Reload" />
+                        </StackPanel>
+                    </Button>
+                </WrapPanel>
+            </StackPanel>
+
+            <materialDesign:Snackbar
+                Background="#0984e3"
+                Foreground="White"
+                MessageQueue="{Binding MessageQueue}" />
+        </Grid>
+    </materialDesign:DialogHost>
+</Window>
