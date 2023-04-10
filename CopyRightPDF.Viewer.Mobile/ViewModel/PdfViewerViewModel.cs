@@ -392,7 +392,7 @@ namespace CopyRightPDF.Viewer.Mobile
                                     if (String.IsNullOrEmpty(license.ActivatedOS))
                                         license.ActivatedOS = $"{CurrentOS}";
                                     else
-                                        license.ActivatedOS = $" | {CurrentOS}";
+                                        license.ActivatedOS += $" | {CurrentOS}";
                                 }
 
                                 storedDeviceMAC.AddRange(localMacAddress);

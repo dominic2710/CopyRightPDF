@@ -30,6 +30,9 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-ios|AnyCPU'">
+	  <CreatePackage>false</CreatePackage>
+	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -62,8 +65,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CopyRightPDF.Core\CopyRightPDF.Core.csproj">
-	    <Private>True</Private>
-	  </ProjectReference>
+	  <Reference Include="CopyRightPDF.Core">
+	    <HintPath>..\CopyRightPDF.Core\bin\Debug\CopyRightPDF.Core.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 </Project>

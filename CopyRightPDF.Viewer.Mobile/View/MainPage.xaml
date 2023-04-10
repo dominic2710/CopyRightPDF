@@ -62,7 +62,6 @@
                     Margin="8,0,0,0"
                     Command="{Binding OpenFileCommand}"
                     HorizontalOptions="Start"
-                    IsVisible="{OnPlatform MacCatalyst=false}"
                     PropertyChanged="Button_PropertyChanged"
                     Text="&#xe700;" />
                 <HorizontalStackLayout
