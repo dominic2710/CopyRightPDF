@@ -456,6 +456,7 @@ namespace CopyRightPDF.Viewer.Mobile
 
         private List<string> GetAllDeviceMacAddress()
         {
+#if WINDOWS || MACCATALYST
             var result = new List<string>();
             var networkInterface = NetworkInterface.GetAllNetworkInterfaces();
 
@@ -465,6 +466,7 @@ namespace CopyRightPDF.Viewer.Mobile
                 if (macAddress != null && macAddress != "")
                     result.Add(macAddress);
             }
+#endif
 
             return result;
         }

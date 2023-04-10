@@ -222,7 +222,8 @@ namespace CopyRightPDF.ViewModels
                     PreventScreenshot = true,
                     Status = "New",
                     NumberOfLimitDevice = 2,
-                    ExpireDate = DateTime.Now.AddDays(30)
+                    ExpireDate = DateTime.Now.AddDays(30),
+                    LastAccess = DateTime.MinValue
                 }, false);
                 LicenseInfoPage licenseInfoPage = new LicenseInfoPage { DataContext = licenseInfoViewModel };
                 licenseInfoPage.ShowDialog();
