@@ -350,17 +350,17 @@ namespace CopyRightPDF.Viewer.Mobile
                             await App.Current.MainPage.DisplayAlert("License is not exist or invalid!", "Re-input or contact admin for password", "OK");
                             continue;
                         }
+
                         //If another client verifying
-                        if (license.IsLocked)
+                        while (license.IsLocked)
                         {
-                            continue;
+                            Thread.Sleep(500);
+                            license = dataProvider.GetLicense(documentId, enteredPassword);
                         }
-                        else
-                        {
-                            //Update status to verifying
-                            license.IsLocked = true;
-                            dataProvider.UpdateLicenseLockStatus(license);
-                        }
+
+                        //Update status to verifying
+                        license.IsLocked = true;
+                        dataProvider.UpdateLicenseLockStatus(license);
 
                         //Check Reader version
                         if (String.Compare(CurrentVersion, license.MinVersion) < 0)
