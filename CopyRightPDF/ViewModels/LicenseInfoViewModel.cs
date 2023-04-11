@@ -219,7 +219,14 @@ namespace CopyRightPDF.ViewModels
                 return true;
             }, p =>
             {
-                var result = MessageBox.Show(App.Current.MainWindow, "Save changes?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var errorMessage = CheckInput();
+                if (String.IsNullOrEmpty(errorMessage))
+                {
+                    MessageQueue.Enqueue(errorMessage);
+                    return;
+                }
+
+                var result = MessageBox.Show("Save changes?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.No) return;
 
                 ReturnLicense = new LicenseModel
@@ -242,6 +249,20 @@ namespace CopyRightPDF.ViewModels
 
                 RequestClose(this, EventArgs.Empty);
             });
+        }
+
+        private string CheckInput()
+        {
+            if (String.IsNullOrEmpty(CustomerName))
+                return "Customer name must be input";
+
+            if (String.IsNullOrEmpty(Password))
+                return "Password must be input";
+
+            if (String.IsNullOrEmpty(MinVersion))
+                return "Min version must be input";
+
+            return "";
         }
     }
 }

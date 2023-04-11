@@ -121,25 +121,36 @@ namespace CopyRightPDF.ViewModels
                 return true;
             }, p =>
             {
-                //Encrypt
-                if (!File.Exists(InputPath))
+                //Check input
+                var errorMessage = CheckInput();
+                if (String.IsNullOrEmpty(errorMessage))
                 {
-                    MessageBox.Show($"The input file does not exist!", "Copyright PDF - Writer", MessageBoxButton.OK);
+                    MessageQueue.Enqueue(errorMessage);
                     return;
-                }
-                if (!Directory.Exists(System.IO.Path.GetDirectoryName(OutputPath)))
-                {
-                    MessageBox.Show($"The output folder not exist!", "Copyright PDF - Writer", MessageBoxButton.OK);
-                    return;
-                }
-                if (Directory.Exists(OutputPath))
-                {
-                    var result = MessageBox.Show($"The output file already exists. Do you want to override it?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
-                    if (result == MessageBoxResult.No) return;
                 }
 
-                WaitingForExecUtility.Instance.DoWork(() => CreateZipFile(), "Creating");
-                MessageQueue.Enqueue("Create file completed");
+                if (IsAddNew)
+                {
+                    //Encrypt
+                    if (!File.Exists(InputPath))
+                    {
+                        MessageBox.Show($"The input file does not exist!", "Copyright PDF - Writer", MessageBoxButton.OK);
+                        return;
+                    }
+                    if (!Directory.Exists(System.IO.Path.GetDirectoryName(OutputPath)))
+                    {
+                        MessageBox.Show($"The output folder not exist!", "Copyright PDF - Writer", MessageBoxButton.OK);
+                        return;
+                    }
+                    if (Directory.Exists(OutputPath))
+                    {
+                        var result = MessageBox.Show($"The output file already exists. Do you want to override it?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
+                        if (result == MessageBoxResult.No) return;
+                    }
+
+                    WaitingForExecUtility.Instance.DoWork(() => CreateZipFile(), "Creating");
+                    MessageQueue.Enqueue("Create file completed");
+                }
 
                 //Return document
                 ReturnDocument = new DocumentModel
@@ -165,6 +176,20 @@ namespace CopyRightPDF.ViewModels
 
                 InputPath = openFileDialog.FileName;
             });
+        }
+
+        private string CheckInput()
+        {
+
+            if (IsAddNew && String.IsNullOrEmpty(InputPath))
+            {
+                return "Input path must be input";
+            }
+            if (String.IsNullOrEmpty(FileName))
+            {
+                return "File name must be input";
+            }
+            return "";
         }
 
         void AddFileToZip(ZipFile zipFile, string entryName, byte[] data)

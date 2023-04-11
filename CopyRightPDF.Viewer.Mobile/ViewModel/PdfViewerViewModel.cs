@@ -2,6 +2,7 @@
 using CopyRightPDF.Viewer.Mobile.ViewModel;
 using Ionic.Zip;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
@@ -208,7 +209,7 @@ namespace CopyRightPDF.Viewer.Mobile
 #elif ANDROID
             CurrentOS= "Android";
 #elif MACCATALYST
-            CurrentOS= "MacOS";
+            CurrentOS = "MacOS";
 #elif IOS
             CurrentOS = "iOS";
 #endif
@@ -349,6 +350,18 @@ namespace CopyRightPDF.Viewer.Mobile
                             await App.Current.MainPage.DisplayAlert("License is not exist or invalid!", "Re-input or contact admin for password", "OK");
                             continue;
                         }
+                        //If another client verifying
+                        if (license.IsLocked)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            //Update status to verifying
+                            license.IsLocked = true;
+                            dataProvider.UpdateLicenseLockStatus(license);
+                        }
+
                         //Check Reader version
                         if (String.Compare(CurrentVersion, license.MinVersion) < 0)
                         {
@@ -363,7 +376,8 @@ namespace CopyRightPDF.Viewer.Mobile
 
                             license.LastAccess = DateTime.Now;
                             license.Status = "Expired";
-                            dataProvider.UpdateLicenseAccess(license);
+                            license.IsLocked = false;
+                            dataProvider.UpdateLicenseAccessInfo(license);
 
                             continue;
                         }
@@ -403,7 +417,8 @@ namespace CopyRightPDF.Viewer.Mobile
                                 license.ActivatedDeviceMAC = String.Join("\r\n", storedDeviceMAC);
                                 license.NumberOfActivatedDevice = license.NumberOfActivatedDevice + 1;
                                 license.LastAccess = DateTime.Now;
-                                dataProvider.UpdateLicenseAccess(license);
+                                license.IsLocked = false;
+                                dataProvider.UpdateLicenseAccessInfo(license);
                             }
                             else
                             {
@@ -415,7 +430,8 @@ namespace CopyRightPDF.Viewer.Mobile
                         {
                             license.Status = "Opened";
                             license.LastAccess = DateTime.Now;
-                            dataProvider.UpdateLicenseAccess(license);
+                            license.IsLocked = false;
+                            dataProvider.UpdateLicenseAccessInfo(license);
                         }
 
                         var pdfFile = GetFile(zipFile, "data.dat");
@@ -423,7 +439,6 @@ namespace CopyRightPDF.Viewer.Mobile
 
                         PdfDocumentStream = ms;
                         isUnlocked = true;
-
                     }
                 }
                 ShowRunning = false;
@@ -456,8 +471,9 @@ namespace CopyRightPDF.Viewer.Mobile
 
         private List<string> GetAllDeviceMacAddress()
         {
-#if WINDOWS || MACCATALYST
             var result = new List<string>();
+
+#if WINDOWS || MACCATALYST
             var networkInterface = NetworkInterface.GetAllNetworkInterfaces();
 
             foreach (var network in networkInterface)

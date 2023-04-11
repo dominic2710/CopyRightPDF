@@ -24,7 +24,7 @@ namespace CopyRightPDF.Core.Models
         private DateTime? _lastAccess;
         private string _minVersion;
         private DateTime? _expireDate;
-
+        private bool _isLocked;
         // Public properties
         public int RowId
         {
@@ -115,11 +115,17 @@ namespace CopyRightPDF.Core.Models
             set { _lastAccess = value; OnPropertyChanged(nameof(LastAccess)); }
         }
 
+        public bool IsLocked
+        {
+            get { return _isLocked; }
+            set { _isLocked = value; OnPropertyChanged(nameof(IsLocked)); }
+        }
+
         public IList<object> ToList
         {
             get
             {
-                return new List<object>() { "=ROW() - 1", Status, FileId, CustomerName, Password, NumberOfLimitDevice, PreventPrint, PreventSameOS, PreventScreenshot, MinVersion, ExpireDate, NumberOfActivatedDevice, ActivatedDeviceMAC, ActivatedOS, LastAccess };
+                return new List<object>() { "=ROW() - 1", FileId, CustomerName, Password, NumberOfLimitDevice, PreventPrint, PreventSameOS, PreventScreenshot, MinVersion, ExpireDate, Status, NumberOfActivatedDevice, ActivatedDeviceMAC, ActivatedOS, LastAccess, IsLocked };
             }
         }
 
@@ -127,7 +133,7 @@ namespace CopyRightPDF.Core.Models
         {
             get
             {
-                return new List<object>() { NumberOfActivatedDevice, ActivatedDeviceMAC, ActivatedOS, LastAccess };
+                return new List<object>() { Status, NumberOfActivatedDevice, ActivatedDeviceMAC, ActivatedOS, LastAccess, IsLocked };
             }
         }
     }
@@ -135,7 +141,6 @@ namespace CopyRightPDF.Core.Models
     public enum LicenseModelEnum
     {
         RowId = 0,
-        Status,
         FileId,
         CustomerName,
         Password,
@@ -145,9 +150,11 @@ namespace CopyRightPDF.Core.Models
         PreventScreenshot,
         MinVersion,
         ExpireDate,
+        Status,
         NumberOfActivatedDevice,
         ActivatedDeviceMAC,
         ActivatedOS,
         LastAccess,
+        IsLocked
     }
 }

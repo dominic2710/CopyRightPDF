@@ -22,9 +22,15 @@ namespace CopyRightPDF.ViewModels
         #region Variable
         private List<DocumentModel> documents;
         private ObservableCollection<DocumentModel> documentsObservable;
+        private ObservableCollection<LicenseModel> licensesObservable;
         private DocumentModel selectedDocument;
         private LicenseModel selectedLicense;
         private CopyRightPDFDataProvider dataProvider;
+        private string filterDocumentName;
+        private string filterLicenseName;
+        private bool isFilterStatusNew;
+        private bool isFilterStatusOpened;
+        private bool isFilterStatusExpired;
         #endregion
 
         #region Properties
@@ -35,13 +41,39 @@ namespace CopyRightPDF.ViewModels
         }
         public ObservableCollection<DocumentModel> DocumentsObservable
         {
-            get { return documentsObservable; }
-            set { documentsObservable = value; OnPropertyChanged(); }
+            get
+            {
+                return new ObservableCollection<DocumentModel>(
+                                    Documents.Where(x => (!String.IsNullOrEmpty(FilterDocumentName)
+                                                && (x.FileName.ToUpper().Contains(FilterDocumentName.ToUpper())
+                                                    || x.Description.ToUpper().Contains(FilterDocumentName.ToUpper())))
+                                                || String.IsNullOrEmpty(FilterDocumentName)));
+            }
         }
+
+        public ObservableCollection<LicenseModel> LicensesObservable
+        {
+            get
+            {
+                if (SelectedDocument == null) return new ObservableCollection<LicenseModel>();
+                return new ObservableCollection<LicenseModel>(
+                        SelectedDocument.Licenses.Where(x => (!String.IsNullOrEmpty(FilterLicenseName)
+                                                && (x.CustomerName.ToUpper().Contains(FilterLicenseName.ToLower())
+                                                    || x.Password.ToUpper().Contains(FilterLicenseName.ToUpper())))
+                                                || String.IsNullOrEmpty(FilterLicenseName))
+                                                    .Where(x => FilterStatuss.Contains(x.Status)));
+            }
+        }
+
         public DocumentModel SelectedDocument
         {
             get { return selectedDocument; }
-            set { selectedDocument = value; OnPropertyChanged(); }
+            set
+            {
+                selectedDocument = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(LicensesObservable));
+            }
         }
         public LicenseModel SelectedLicense
         {
@@ -49,6 +81,81 @@ namespace CopyRightPDF.ViewModels
             set { selectedLicense = value; OnPropertyChanged(); }
         }
         public bool IsDataChanged { get; set; }
+        public string FilterDocumentName
+        {
+            get { return filterDocumentName; }
+            set
+            {
+                filterDocumentName = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(DocumentsObservable));
+            }
+        }
+
+        public string FilterLicenseName
+        {
+            get { return filterLicenseName; }
+            set
+            {
+                filterLicenseName = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(LicensesObservable));
+            }
+        }
+
+        public bool IsFilterStatusNew
+        {
+            get { return isFilterStatusNew; }
+            set
+            {
+                isFilterStatusNew = value;
+
+                if (isFilterStatusNew)
+                    FilterStatuss.Add("New");
+                else
+                    FilterStatuss.Remove("New");
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(LicensesObservable));
+            }
+        }
+
+        public bool IsFilterStatusOpened
+        {
+            get { return isFilterStatusOpened; }
+            set
+            {
+                isFilterStatusOpened = value;
+
+                if (isFilterStatusOpened)
+                    FilterStatuss.Add("Opened");
+                else
+                    FilterStatuss.Remove("Opened");
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(LicensesObservable));
+            }
+        }
+
+        public bool IsFilterStatusExpired
+        {
+            get { return isFilterStatusExpired; }
+            set
+            {
+                isFilterStatusExpired = value;
+
+                if (isFilterStatusExpired)
+                    FilterStatuss.Add("Expired");
+                else
+                    FilterStatuss.Remove("Expired");
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(LicensesObservable));
+            }
+        }
+
+        public List<string> FilterStatuss { get; set; }
+
         #endregion
         #region Command
         public ICommand EditDocumentCommand { get; set; }
@@ -72,7 +179,12 @@ namespace CopyRightPDF.ViewModels
 
             }
             Documents = new List<DocumentModel>();
+            FilterStatuss = new List<string>();
+
             IsDataChanged = false;
+            IsFilterStatusNew = true;
+            IsFilterStatusOpened = true;
+            IsFilterStatusExpired = true;
 
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(1));
 
@@ -167,7 +279,7 @@ namespace CopyRightPDF.ViewModels
                     };
                     Documents.Add(newDocument);
 
-                    DocumentsObservable = new ObservableCollection<DocumentModel>(Documents);
+                    OnPropertyChanged(nameof(DocumentsObservable));
                     SelectedDocument = newDocument;
 
                     IsDataChanged = true;
@@ -223,7 +335,8 @@ namespace CopyRightPDF.ViewModels
                     Status = "New",
                     NumberOfLimitDevice = 2,
                     ExpireDate = DateTime.Now.AddDays(30),
-                    LastAccess = DateTime.MinValue
+                    LastAccess = DateTime.MinValue,
+                    IsLocked = false,
                 }, false);
                 LicenseInfoPage licenseInfoPage = new LicenseInfoPage { DataContext = licenseInfoViewModel };
                 licenseInfoPage.ShowDialog();
@@ -251,6 +364,7 @@ namespace CopyRightPDF.ViewModels
                     listLicense.Add(newLicense);
 
                     SelectedDocument.Licenses = new ObservableCollection<LicenseModel>(listLicense);
+                    OnPropertyChanged(nameof(LicensesObservable));
                     SelectedLicense = newLicense;
 
                     IsDataChanged = true;
@@ -275,7 +389,7 @@ namespace CopyRightPDF.ViewModels
                 if (result == MessageBoxResult.No) return;
 
                 Documents.Remove(SelectedDocument);
-                DocumentsObservable = new ObservableCollection<DocumentModel>(Documents);
+                OnPropertyChanged(nameof(DocumentsObservable));
                 IsDataChanged = true;
             });
 
@@ -303,7 +417,8 @@ namespace CopyRightPDF.ViewModels
             WaitingForExecUtility.Instance.DoWork(() =>
             {
                 Documents = dataProvider.GetDocument();
-                DocumentsObservable = new ObservableCollection<DocumentModel>(Documents);
+                OnPropertyChanged(nameof(DocumentsObservable));
+
             }, "Loading");
 
             MessageQueue.Enqueue("Reload data completed");

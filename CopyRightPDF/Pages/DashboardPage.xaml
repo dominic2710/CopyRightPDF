@@ -99,11 +99,37 @@
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
-                Margin="0,15,0,0"
                 VerticalAlignment="Center"
                 FontSize="20"
-                Foreground="#2980b9"
+                Foreground="#FF2196F3"
                 Text="Documents" />
+
+            <WrapPanel Margin="200,0,0,0" VerticalAlignment="Center">
+                <materialDesign:PackIcon
+                    Width="22"
+                    Height="22"
+                    Margin="0,5,5,0"
+                    VerticalAlignment="Center"
+                    Foreground="#FF2196F3"
+                    Kind="Magnify">
+                    <materialDesign:PackIcon.RenderTransform>
+                        <RotateTransform Angle="90" CenterX="12" CenterY="12" />
+                    </materialDesign:PackIcon.RenderTransform>
+                </materialDesign:PackIcon>
+
+                <TextBox
+                    Width="300"
+                    Height="35"
+                    HorizontalAlignment="Left"
+                    materialDesign:HintAssist.Hint="File name or description"
+                    materialDesign:TextFieldAssist.HasClearButton="True"
+                    FontSize="15"
+                    Foreground="White"
+                    Style="{StaticResource MaterialDesignTextBox}"
+                    Text="{Binding FilterDocumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </WrapPanel>
+
+
             <Button
                 Grid.Row="0"
                 Margin="0,15,0,0"
@@ -156,11 +182,49 @@
             </DataGrid>
             <TextBlock
                 Grid.Row="2"
-                Margin="0,15,0,0"
                 VerticalAlignment="Center"
                 FontSize="20"
-                Foreground="#2980b9"
+                Foreground="#FF2196F3"
                 Text="Licenses" />
+
+            <WrapPanel
+                Grid.Row="2"
+                Margin="200,0,0,0"
+                VerticalAlignment="Center">
+                <materialDesign:PackIcon
+                    Width="22"
+                    Height="22"
+                    Margin="0,5,5,0"
+                    VerticalAlignment="Center"
+                    Foreground="#FF2196F3"
+                    Kind="Magnify">
+                    <materialDesign:PackIcon.RenderTransform>
+                        <RotateTransform Angle="90" CenterX="12" CenterY="12" />
+                    </materialDesign:PackIcon.RenderTransform>
+                </materialDesign:PackIcon>
+
+                <TextBox
+                    Width="300"
+                    Height="35"
+                    HorizontalAlignment="Left"
+                    materialDesign:HintAssist.Hint="Customer or password"
+                    materialDesign:TextFieldAssist.HasClearButton="True"
+                    FontSize="15"
+                    Foreground="White"
+                    Style="{StaticResource MaterialDesignTextBox}"
+                    Text="{Binding FilterLicenseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <ListBox
+                    Margin="50,0,0,0"
+                    FontSize="14"
+                    Foreground="White"
+                    Style="{StaticResource MaterialDesignFilterChipPrimaryListBox}">
+                    <ListBoxItem Content="New" IsSelected="{Binding IsFilterStatusNew}" />
+                    <ListBoxItem Content="Opened" IsSelected="{Binding IsFilterStatusOpened}" />
+                    <ListBoxItem Content="Expired" IsSelected="{Binding IsFilterStatusExpired}" />
+                </ListBox>
+            </WrapPanel>
+
             <Button
                 Grid.Row="2"
                 Margin="0,15,0,0"
@@ -183,7 +247,7 @@
                 Grid.Row="3"
                 Margin="0,5,0,0"
                 AlternationCount="2"
-                ItemsSource="{Binding ElementName=dtgDocuments, Path=SelectedItem.Licenses, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding LicensesObservable, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItem="{Binding SelectedLicense, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource DatagridCommonStyle}">
                 <DataGrid.InputBindings>
@@ -219,8 +283,8 @@
                             <DataTemplate>
                                 <Grid Visibility="{Binding PreventPrint, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <Ellipse
-                                        Width="22"
-                                        Height="22"
+                                        Width="20"
+                                        Height="20"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Fill="#d35400" />
