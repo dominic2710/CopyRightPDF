@@ -290,7 +290,7 @@ namespace CopyRightPDF.Viewer.Mobile
             //Create file picker with file type as PDF.
             FilePickerFileType pdfFileType = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>{
                         { DevicePlatform.iOS, new[] { "public.crpdf" } },
-                        { DevicePlatform.Android, new[] { "crpdf", "*" } },
+                        { DevicePlatform.Android, new[] { "crpdf"} },
                         { DevicePlatform.WinUI, new[] { "crpdf" } },
                         { DevicePlatform.MacCatalyst, new[] { "crpdf" } },
                     });
@@ -299,7 +299,7 @@ namespace CopyRightPDF.Viewer.Mobile
             PickOptions options = new()
             {
                 PickerTitle = "Please select a PDF file",
-                //FileTypes = pdfFileType,
+                FileTypes = pdfFileType,
             };
             await PickAndShow(options);
         }
@@ -314,6 +314,11 @@ namespace CopyRightPDF.Viewer.Mobile
                 //Pick the file from local storage.
                 var result = await FilePicker.Default.PickAsync(options);
                 if (result == null) return;
+                if (System.IO.Path.GetExtension(result.FileName) != "crpdf")
+                {
+                    await App.Current.MainPage.DisplayAlert("Your *.CrPdf file was broken or invalid", "Please contact admin for new file", "OK");
+                    return;
+                }
                 ShowRunning = true;
 
                 using (ZipFile zipFile = ZipFile.Read(result.FullPath))
@@ -352,11 +357,21 @@ namespace CopyRightPDF.Viewer.Mobile
                         }
 
                         //If another client verifying
+                        int retryCount = 1;
+                        int maxRetryCount = 12;
                         while (license.IsLocked)
                         {
+                            retryCount++;
+                            if (retryCount > maxRetryCount)
+                            {
+                                await App.Current.MainPage.DisplayAlert("Request timeout", "Please try again later", "OK");
+                                break;
+                            }
+
                             Thread.Sleep(500);
                             license = dataProvider.GetLicense(documentId, enteredPassword);
                         }
+                        if (license.IsLocked) continue;
 
                         //Update status to verifying
                         license.IsLocked = true;
@@ -443,6 +458,10 @@ namespace CopyRightPDF.Viewer.Mobile
                 }
                 ShowRunning = false;
             }
+            catch (ZipException ex)
+            {
+                await App.Current.MainPage.DisplayAlert("Your *.CrPdf file was broken or invalid", "Please contact admin for new file", "OK");
+            }
             catch (Exception ex)
             {
                 //Display error when file picker failed to open files.
@@ -452,6 +471,9 @@ namespace CopyRightPDF.Viewer.Mobile
                 else
                     message = "File open failed.";
                 Application.Current?.MainPage?.DisplayAlert("Error", message, "OK");
+            }
+            finally
+            {
                 ShowRunning = false;
             }
         }
