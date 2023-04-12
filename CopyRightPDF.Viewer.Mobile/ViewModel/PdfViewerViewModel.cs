@@ -314,7 +314,7 @@ namespace CopyRightPDF.Viewer.Mobile
                 //Pick the file from local storage.
                 var result = await FilePicker.Default.PickAsync(options);
                 if (result == null) return;
-                if (System.IO.Path.GetExtension(result.FileName) != "crpdf")
+                if (System.IO.Path.GetExtension(result.FileName) != ".crpdf")
                 {
                     await App.Current.MainPage.DisplayAlert("Your *.CrPdf file was broken or invalid", "Please contact admin for new file", "OK");
                     return;

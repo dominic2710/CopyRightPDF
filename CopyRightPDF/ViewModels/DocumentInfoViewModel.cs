@@ -123,7 +123,7 @@ namespace CopyRightPDF.ViewModels
             {
                 //Check input
                 var errorMessage = CheckInput();
-                if (String.IsNullOrEmpty(errorMessage))
+                if (!String.IsNullOrEmpty(errorMessage))
                 {
                     MessageQueue.Enqueue(errorMessage);
                     return;
