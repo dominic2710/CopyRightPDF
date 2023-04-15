@@ -380,6 +380,10 @@ namespace CopyRightPDF.Viewer.Mobile
                         //Check Reader version
                         if (String.Compare(CurrentVersion, license.MinVersion) < 0)
                         {
+                            //Update status to verified
+                            license.IsLocked = false;
+                            dataProvider.UpdateLicenseLockStatus(license);
+
                             await App.Current.MainPage.DisplayAlert("Your reader is out of update", "Please contact admin for new version", "OK");
                             continue;
                         }
@@ -411,6 +415,10 @@ namespace CopyRightPDF.Viewer.Mobile
                                 {
                                     if (license.PreventSameOS)
                                     {
+                                        //Update status to verified
+                                        license.IsLocked = false;
+                                        dataProvider.UpdateLicenseLockStatus(license);
+
                                         await App.Current.MainPage.DisplayAlert("Copyright PDF", "File cannot open on this device", "OK");
                                         continue;
                                     }
@@ -437,6 +445,10 @@ namespace CopyRightPDF.Viewer.Mobile
                             }
                             else
                             {
+                                //Update status to verified
+                                license.IsLocked = false;
+                                dataProvider.UpdateLicenseLockStatus(license);
+
                                 await App.Current.MainPage.DisplayAlert("Copyright PDF", "File cannot open on this device", "OK");
                                 continue;
                             }
