@@ -120,4 +120,11 @@ public partial class MainPage : ContentPage
             }
         }
     }
+
+    private void PdfViewer_HyperlinkClicked(object sender, Syncfusion.Maui.PdfViewer.HyperlinkClickedEventArgs e)
+    {
+        if (e.Uri == null) return;
+        Browser.Default.OpenAsync(e.Uri, BrowserLaunchMode.SystemPreferred);
+        e.Handled = true;
+    }
 }

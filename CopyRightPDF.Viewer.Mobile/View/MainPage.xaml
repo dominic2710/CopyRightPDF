@@ -157,6 +157,7 @@
                 x:Name="PdfViewer"
                 Grid.Row="2"
                 DocumentSource="{Binding PdfDocumentStream}"
+                HyperlinkClicked="PdfViewer_HyperlinkClicked"
                 MaxZoomFactor="{Binding MaxZoom, Mode=OneWayToSource}"
                 MinZoomFactor="{Binding MinZoom, Mode=OneWayToSource}"
                 PageCount="{Binding PageCount, Mode=OneWayToSource}"
