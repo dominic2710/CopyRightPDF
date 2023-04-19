@@ -448,6 +448,11 @@
                 Background="#0984e3"
                 Foreground="White"
                 MessageQueue="{Binding MessageQueue}" />
+            <materialDesign:Snackbar
+                Grid.Row="4"
+                Background="Red"
+                Foreground="White"
+                MessageQueue="{Binding ErrorMessageQueue}" />
         </Grid>
     </materialDesign:DialogHost>
 </Window>

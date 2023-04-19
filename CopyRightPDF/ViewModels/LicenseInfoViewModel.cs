@@ -279,6 +279,7 @@ namespace CopyRightPDF.ViewModels
         {
             InputLicense = license;
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(1));
+            ErrorMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
             ReturnLicense = null;
             IsAddNew = isAddNew;
             DataProvider = dataProvider;
@@ -320,7 +321,7 @@ namespace CopyRightPDF.ViewModels
                 {
                     ActivatedDate = ActivatedDate,
                     NumberOfActivatedDevice = NumberOfActivatedDevice,
-                    ActivatedDeviceMAC = ActivatedOS,
+                    ActivatedDeviceMAC = ActivatedDeviceMAC,
                     ActivatedOS = ActivatedOS,
                     LastAccess = LastAccess,
                     IsLocked = false,
@@ -340,7 +341,7 @@ namespace CopyRightPDF.ViewModels
                     RegisteredPhoneNumber = RegisteredPhoneNumber,
                     RowId = RowId,
                     SpecifiedExpireDate = SpecifiedExpireDate,
-                    Status = "Approved",
+                    Status = String.IsNullOrEmpty(Status) || Status == "Registered" ? "Approved" : Status,
                     IsDelete = false,
                 };
 
@@ -348,7 +349,8 @@ namespace CopyRightPDF.ViewModels
                 ApproveLicense(newLicense);
 
                 //Send mail here
-                SendApproveMail(newLicense);
+                if (String.IsNullOrEmpty(Status) || Status == "Registered")
+                    SendApproveMail(newLicense);
 
                 ReturnLicense = newLicense;
 
@@ -413,6 +415,7 @@ namespace CopyRightPDF.ViewModels
                 IsExpireDayCount = true;
             else
                 IsNeverExpire = true;
+            RowId = license.RowId;
         }
         private void ApproveLicense(LicenseModel license)
         {
@@ -432,7 +435,7 @@ namespace CopyRightPDF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageQueue.Enqueue(ex.Message);
+                    ErrorMessageQueue.Enqueue(ex.Message);
                     return;
                 }
             }, "Approving");
@@ -455,7 +458,7 @@ namespace CopyRightPDF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageQueue.Enqueue(ex.Message);
+                    ErrorMessageQueue.Enqueue(ex.Message);
                 }
 
             }, "Sending Mail");

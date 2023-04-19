@@ -3,6 +3,7 @@ using CopyRightPDF.Core.Models;
 using CopyRightPDF.Pages;
 using CopyRightPDF.Utilities;
 using Ionic.Zip;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -98,7 +99,8 @@ namespace CopyRightPDF.ViewModels
         {
             ReturnDocument = null;
 
-            MessageQueue = new MaterialDesignThemes.Wpf.SnackbarMessageQueue();
+            MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(1));
+            ErrorMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
 
             IsAddNew = isAddNew;
             FileId = documentModel.FileId;

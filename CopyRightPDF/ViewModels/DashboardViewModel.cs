@@ -206,42 +206,7 @@ namespace CopyRightPDF.ViewModels
             IsFilterStatusExpired = true;
 
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(1));
-
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    var fileId = Guid.NewGuid().ToString();
-            //    var licenses = new List<LicenseModel>();
-            //    for (int j = 0; j < 10; j++)
-            //    {
-            //        licenses.Add(new LicenseModel
-            //        {
-            //            RowId = i,
-            //            Status = "Opened",
-            //            Password = $"File {i} - 123456",
-            //            ActivatedDeviceMAC = "00-FF-4F-4D-20-9F\r\n18-C0-4D-4B-FD-2B\r\n00-50-56-C0-00-01\r\n00-50-56-C0-00-08\r\n00-50-56-C0-00-03",
-            //            ActivatedOS = "Windows | Mac | Android | iOS",
-            //            FileId = fileId,
-            //            LastAccess = DateTime.Now,
-            //            ExpireDate = DateTime.Now,
-            //            MinVersion = "1.0",
-            //            NumberOfActivatedDevice = 2,
-            //            NumberOfLimitDevice = 1,
-            //            PreventPrint = true,
-            //            PreventSameOS = true,
-            //            PreventScreenshot = false
-            //        });
-            //    }
-
-            //    Documents.Add(new DocumentModel
-            //    {
-            //        FileId = fileId,
-            //        FileName = $"File {i}",
-            //        Description = $"Decription {i}",
-            //        Licenses = new ObservableCollection<LicenseModel>(licenses),
-            //        RowId = i
-            //    });
-            //}
-            //DocumentsObservable = new ObservableCollection<DocumentModel>(Documents);
+            ErrorMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
 
             LoadData();
 
@@ -411,12 +376,12 @@ namespace CopyRightPDF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageQueue.Enqueue(ex.Message);
+                    ErrorMessageQueue.Enqueue(ex.Message);
                 }
 
             }, "Loading");
 
-            MessageQueue.Enqueue("Reload data completed");
+            //MessageQueue.Enqueue("Reload data completed");
         }
 
         private void ApproveLicense()
@@ -435,7 +400,7 @@ namespace CopyRightPDF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageQueue.Enqueue(ex.Message);
+                    ErrorMessageQueue.Enqueue(ex.Message);
                 }
             }, "Approving");
         }
@@ -458,7 +423,7 @@ namespace CopyRightPDF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageQueue.Enqueue(ex.Message);
+                    ErrorMessageQueue.Enqueue(ex.Message);
                 }
 
             }, "Sending Mail");
@@ -475,7 +440,7 @@ namespace CopyRightPDF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageQueue.Enqueue(ex.Message);
+                    ErrorMessageQueue.Enqueue(ex.Message);
                 }
 
             }, "Deleting License");
@@ -492,7 +457,7 @@ namespace CopyRightPDF.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageQueue.Enqueue(ex.Message);
+                    ErrorMessageQueue.Enqueue(ex.Message);
                 }
 
             }, "Deleting License");

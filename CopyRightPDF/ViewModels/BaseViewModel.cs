@@ -19,6 +19,7 @@ namespace CopyRightPDF.ViewModels
         }
 
         public SnackbarMessageQueue MessageQueue { get; set; }
+        public SnackbarMessageQueue ErrorMessageQueue { get; set; }
     }
 
     class RelayCommand<T> : ICommand

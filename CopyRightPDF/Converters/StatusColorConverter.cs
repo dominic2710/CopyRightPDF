@@ -20,7 +20,7 @@ namespace CopyRightPDF.Converters
                 case "Approved":
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#27ae60"));
                 case "Opened":
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2980b9"));
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2196F3"));
                 case "Expired":
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#7f8c8d"));
                 default:
