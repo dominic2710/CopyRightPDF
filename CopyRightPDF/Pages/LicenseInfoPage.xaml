@@ -9,7 +9,7 @@
     xmlns:viewModels="clr-namespace:CopyRightPDF.ViewModels"
     Title="{Binding WindowTitle}"
     Width="1020"
-    Height="850"
+    Height="820"
     Background="#2f3640"
     FontFamily="Segou UI"
     FontSize="14"
@@ -28,7 +28,11 @@
                 <ColumnDefinition Width="1" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <StackPanel Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.RowSpan="2" Margin="15">
                 <TextBlock
                     FontSize="17"
                     Foreground="#FF2196F3"
@@ -117,6 +121,7 @@
                         TextAlignment="Right" />
                     <DatePicker
                         Width="150"
+                        IsEnabled="False"
                         SelectedDate="{Binding ActivatedDate, UpdateSourceTrigger=PropertyChanged}"
                         Style="{DynamicResource MaterialDesignOutlinedDatePicker}" />
                 </WrapPanel>
@@ -130,6 +135,7 @@
                     <TextBox
                         Width="80"
                         HorizontalContentAlignment="Right"
+                        IsEnabled="False"
                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"
                         Text="{Binding NumberOfActivatedDevice, UpdateSourceTrigger=PropertyChanged}" />
                 </WrapPanel>
@@ -145,6 +151,7 @@
                         Width="250"
                         Height="120"
                         AcceptsReturn="True"
+                        IsEnabled="False"
                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"
                         Text="{Binding ActivatedDeviceMAC, UpdateSourceTrigger=PropertyChanged}"
                         VerticalScrollBarVisibility="Auto" />
@@ -159,6 +166,7 @@
                         TextAlignment="Right" />
                     <TextBox
                         Width="250"
+                        IsEnabled="False"
                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"
                         Text="{Binding ActivatedOS, UpdateSourceTrigger=PropertyChanged}" />
                 </WrapPanel>
@@ -177,9 +185,10 @@
                 </WrapPanel>
             </StackPanel>
             <Rectangle
+                Grid.RowSpan="2"
                 Grid.Column="1"
                 Width="0.4"
-                Margin="0,15,0,15"
+                Margin="0,15,0,10"
                 Fill="White" />
             <StackPanel Grid.Column="2" Margin="15">
                 <TextBlock
@@ -338,57 +347,88 @@
                         Text="{Binding MinVersion, UpdateSourceTrigger=PropertyChanged}" />
                 </WrapPanel>
 
-                <WrapPanel Margin="215,20,0,0">
-                    <Button
-                        Width="100"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Command="{Binding OKCommand}"
-                        Foreground="#FF2196F3"
-                        Style="{StaticResource MaterialDesignOutlinedButton}">
-                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                            <materialDesign:PackIcon
-                                Width="16"
-                                Height="16"
-                                VerticalAlignment="Center"
-                                Foreground="#FF2196F3"
-                                Kind="Check" />
-                            <TextBlock
-                                Margin="5,0,0,0"
-                                VerticalAlignment="Center"
-                                Foreground="#FF2196F3"
-                                Text="OK" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button
-                        Width="100"
-                        Margin="15,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        BorderBrush="#44bd32"
-                        Command="{Binding ReloadCommand}"
-                        Foreground="#44bd32"
-                        Style="{StaticResource MaterialDesignOutlinedButton}">
-                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                            <materialDesign:PackIcon
-                                Width="16"
-                                Height="16"
-                                VerticalAlignment="Center"
-                                Foreground="#44bd32"
-                                Kind="Reload" />
-                            <TextBlock
-                                Margin="5,0,0,0"
-                                VerticalAlignment="Center"
-                                Foreground="#44bd32"
-                                Text="Reload" />
-                        </StackPanel>
-                    </Button>
-                </WrapPanel>
             </StackPanel>
 
+            <WrapPanel
+                Grid.Row="1"
+                Grid.ColumnSpan="3"
+                Margin="0,0,30,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+                <Button
+                    Width="150"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    BorderBrush="#ffa502"
+                    Command="{Binding ResendMailCommand}"
+                    Foreground="#ffa502"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="16"
+                            Height="16"
+                            VerticalAlignment="Center"
+                            Foreground="#ffa502"
+                            Kind="EmailResendOutline" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="#ffa502"
+                            Text="Re-send Mail" />
+                    </StackPanel>
+                </Button>
+
+                <Button
+                    Width="200"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding OKCommand}"
+                    Foreground="#FF2196F3"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="16"
+                            Height="16"
+                            VerticalAlignment="Center"
+                            Foreground="#FF2196F3"
+                            Kind="Check" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="#FF2196F3"
+                            Text="{Binding OKButtonContent}" />
+                    </StackPanel>
+                </Button>
+
+                <Button
+                    Width="100"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    BorderBrush="#44bd32"
+                    Command="{Binding ReloadCommand}"
+                    Foreground="#44bd32"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="16"
+                            Height="16"
+                            VerticalAlignment="Center"
+                            Foreground="#44bd32"
+                            Kind="Reload" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="#44bd32"
+                            Text="Reload" />
+                    </StackPanel>
+                </Button>
+            </WrapPanel>
+
             <materialDesign:Snackbar
-                Grid.ColumnSpan="2"
+                Grid.Row="1"
+                Grid.ColumnSpan="3"
                 Background="#0984e3"
                 Foreground="White"
                 MessageQueue="{Binding MessageQueue}" />

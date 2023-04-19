@@ -94,7 +94,7 @@ namespace CopyRightPDF.ViewModels
         #endregion  
 
         public DocumentInfoViewModel() { }
-        public DocumentInfoViewModel(DocumentModel documentModel, bool isAddNew)
+        public DocumentInfoViewModel(DocumentModel documentModel, bool isAddNew, CopyRightPDFDataProvider dataProvider)
         {
             ReturnDocument = null;
 
@@ -150,7 +150,30 @@ namespace CopyRightPDF.ViewModels
 
                     WaitingForExecUtility.Instance.DoWork(() => CreateZipFile(), "Creating");
                     MessageQueue.Enqueue("Create file completed");
+
+                    var newDocument = new DocumentModel
+                    {
+                        FileId = FileId,
+                        FileName = FileName,
+                        Description = Description,
+                        IsDelete = false,
+                    };
+
+                    dataProvider.AddDocument(newDocument);
                 }
+                else
+                {
+                    var newDocument = new DocumentModel
+                    {
+                        FileId = FileId,
+                        FileName = FileName,
+                        Description = Description,
+                        IsDelete = false,
+                        RowId = documentModel.RowId
+                    };
+                    dataProvider.UpdateDocument(newDocument);
+                }
+
 
                 //Return document
                 ReturnDocument = new DocumentModel

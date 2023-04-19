@@ -155,7 +155,9 @@
                 AlternationCount="2"
                 ColumnHeaderStyle="{StaticResource DataGridHeaderCenter}"
                 ItemsSource="{Binding DocumentsObservable}"
+                LoadingRow="dtgDocuments_LoadingRow"
                 SelectedItem="{Binding SelectedDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectionChanged="dtgDocuments_SelectionChanged"
                 SelectionMode="Single"
                 Style="{StaticResource DatagridCommonStyle}">
                 <DataGrid.InputBindings>
@@ -252,7 +254,9 @@
                 Margin="0,5,0,0"
                 AlternationCount="2"
                 ItemsSource="{Binding LicensesObservable, UpdateSourceTrigger=PropertyChanged}"
+                LoadingRow="dtgLicenses_LoadingRow"
                 SelectedItem="{Binding SelectedLicense, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectionChanged="dtgLicenses_SelectionChanged"
                 Style="{StaticResource DatagridCommonStyle}">
                 <DataGrid.InputBindings>
                     <MouseBinding
@@ -414,27 +418,6 @@
                 Grid.Row="4"
                 Margin="0,15,0,0"
                 HorizontalAlignment="Right">
-                <Button
-                    Width="100"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Command="{Binding UpdateCommand}"
-                    Foreground="#FF2196F3"
-                    Style="{StaticResource MaterialDesignOutlinedButton}">
-                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                        <materialDesign:PackIcon
-                            Width="16"
-                            Height="16"
-                            VerticalAlignment="Center"
-                            Foreground="#FF2196F3"
-                            Kind="ContentSaveAllOutline" />
-                        <TextBlock
-                            Margin="5,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="#FF2196F3"
-                            Text="Save" />
-                    </StackPanel>
-                </Button>
 
                 <Button
                     Width="100"

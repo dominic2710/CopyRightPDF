@@ -58,6 +58,13 @@ namespace CopyRightPDF.Core
             var appendResponse = updateRequest.Execute();
         }
 
+        public void DeleteEntry(string range)
+        {
+            SpreadsheetsResource.ValuesResource.ClearRequest clearRequest =
+                                        service.Spreadsheets.Values.Clear(new ClearValuesRequest(), SpreadSheetId, range);
+            ClearValuesResponse clearResponse = clearRequest.Execute();
+        }
+
         public void ClearAllDataExcludeFirstRow(string sheetName)
         {
             string range = $"{sheetName}!A2:ZZ";

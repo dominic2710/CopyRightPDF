@@ -18,43 +18,40 @@ namespace CopyRightPDF.Core
             this.documentSheetName = documentSheetName;
             this.licenseSheetName = licenseSheetName;
         }
+        //public bool UpdateDocument(List<DocumentModel> documents)
+        //{
+        //    try
+        //    {
+        //        dataAccess.ClearAllDataExcludeFirstRow(documentSheetName);
+        //        dataAccess.ClearAllDataExcludeFirstRow(licenseSheetName);
 
-        public bool UpdateDocument(List<DocumentModel> documents)
+        //        var listData = documents.Select(x => x.ToList).ToList();
+        //        var range = $"{documentSheetName}!A:D";
+
+        //        dataAccess.CreateEntry(listData, range);
+
+        //        listData = new List<IList<object>>();
+
+        //        foreach (var doc in documents)
+        //        {
+        //            listData.AddRange(doc.Licenses.Select(x => x.ToList).ToList());
+        //        }
+        //        range = $"{licenseSheetName}!A:W";
+
+        //        dataAccess.CreateEntry(listData, range);
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
+        //    }
+        //}
+        public bool AddDocument(DocumentModel document)
         {
             try
             {
-                dataAccess.ClearAllDataExcludeFirstRow(documentSheetName);
-                dataAccess.ClearAllDataExcludeFirstRow(licenseSheetName);
-
-                var listData = documents.Select(x => x.ToList).ToList();
-                var range = $"{documentSheetName}!A:D";
-
-                dataAccess.CreateEntry(listData, range);
-
-                listData = new List<IList<object>>();
-
-                foreach (var doc in documents)
-                {
-                    listData.AddRange(doc.Licenses.Select(x => x.ToList).ToList());
-                }
-                range = $"{licenseSheetName}!A:W";
-
-                dataAccess.CreateEntry(listData, range);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
-            }
-        }
-
-        public bool AddLicense(LicenseModel license)
-        {
-            try
-            {
-                var listData = new List<IList<object>> { license.ToList };
-                var range = $"{licenseSheetName}!A:T";
-
+                var listData = new List<IList<object>> { document.ToList };
+                var range = $"{documentSheetName}!A:E";
                 dataAccess.CreateEntry(listData, range);
                 return true;
             }
@@ -63,15 +60,13 @@ namespace CopyRightPDF.Core
                 throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
             }
         }
-
-        public bool ApproveLicense(LicenseModel license)
+        public bool UpdateDocument(DocumentModel document)
         {
             try
             {
-                license.Status = "Approved";
-                var rowId = license.RowId + 1;
-                var listData = new List<IList<object>> { license.ToList };
-                var range = $"{licenseSheetName}!A{rowId}:W{rowId}";
+                var rowId = document.RowId + 1;
+                var listData = new List<IList<object>> { document.ToList };
+                var range = $"{documentSheetName}!A{rowId}:X{rowId}";
 
                 dataAccess.UpdateEntry(listData, range);
 
@@ -82,7 +77,70 @@ namespace CopyRightPDF.Core
                 throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
             }
         }
+        public bool DeleteDocument(DocumentModel document)
+        {
+            try
+            {
+                var rowId = document.RowId + 1;
+                var range = $"{documentSheetName}!X{rowId}:X{rowId}";
+                var listData = new List<IList<object>> { new List<object> { true } };
+                dataAccess.UpdateEntry(listData, range);
 
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
+            }
+        }
+        public bool AddLicense(LicenseModel license)
+        {
+            try
+            {
+                var listData = new List<IList<object>> { license.ToList };
+                var range = $"{licenseSheetName}!A:X";
+                dataAccess.CreateEntry(listData, range);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
+            }
+        }
+        public bool ApproveLicense(LicenseModel license)
+        {
+            try
+            {
+                //license.Status = "Approved";
+                var rowId = license.RowId + 1;
+                var listData = new List<IList<object>> { license.ToList };
+                var range = $"{licenseSheetName}!A{rowId}:X{rowId}";
+
+                dataAccess.UpdateEntry(listData, range);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
+            }
+        }
+        public bool DeleteLicense(LicenseModel license)
+        {
+            try
+            {
+                var rowId = license.RowId + 1;
+                var range = $"{licenseSheetName}!X{rowId}:X{rowId}";
+                var listData = new List<IList<object>> { new List<object> { true } };
+                dataAccess.UpdateEntry(listData, range);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
+            }
+        }
         public List<DocumentModel> GetDocument()
         {
             try
@@ -90,7 +148,7 @@ namespace CopyRightPDF.Core
                 var range = $"{documentSheetName}!A:D";
                 var documentData = dataAccess.GetEntry(range);
 
-                range = $"{licenseSheetName}!A:W";
+                range = $"{licenseSheetName}!A:X";
                 var licensesData = dataAccess.GetEntry(range);
 
                 var licenses = new List<LicenseModel>();
@@ -125,8 +183,11 @@ namespace CopyRightPDF.Core
                         SpecifiedExpireDate = GetItem<DateTime?>(row, (int)LicenseModelEnum.SpecifiedExpireDate),
                         ExpireDayCount = GetItem<int?>(row, (int)LicenseModelEnum.ExpireDayCount),
                         IsLocked = GetItem<bool>(row, (int)LicenseModelEnum.IsLocked),
+                        IsDelete = GetItem<bool>(row, (int)LicenseModelEnum.IsDelete),
+                        ActivatedDate = GetItem<DateTime?>(row, (int)(LicenseModelEnum.ActivatedDate)),
                     });
                 }
+                licenses.RemoveAll(x => x.IsDelete);
 
                 var documents = new List<DocumentModel>();
                 foreach (var row in documentData)
@@ -141,7 +202,6 @@ namespace CopyRightPDF.Core
                                             licenses.Where(x => x.FileId == GetItem<string>(row, (int)DocumentModelEnum.FileId)))
                     });
                 }
-
                 return documents;
             }
             catch (Exception ex)
@@ -149,23 +209,27 @@ namespace CopyRightPDF.Core
                 throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
             }
         }
-
         public LicenseModel GetLicense(string fileId, string password)
         {
             try
             {
-                var range = $"{licenseSheetName}!A:P";
+                var range = $"{licenseSheetName}!A:X";
                 var licensesData = dataAccess.GetEntry(range);
 
                 if (licensesData == null || licensesData.Count == 0) return null;
 
                 var row = licensesData.Where(x => GetItem<string>(x, (int)LicenseModelEnum.FileId) == fileId)
                                         .Where(x => GetItem<string>(x, (int)LicenseModelEnum.Password) == password)
+                                        .Where(X => GetItem<bool>(X, (int)LicenseModelEnum.IsDelete) == false)
                                         .FirstOrDefault();
                 if (row == null || row.Count == 0) return null;
 
                 return new LicenseModel
                 {
+                    RegisteredEmail = GetItem<string>(row, (int)LicenseModelEnum.RegisteredEmail),
+                    RegisteredPhoneNumber = GetItem<string>(row, (int)LicenseModelEnum.RegisteredPhoneNumber),
+                    RegisteredCustomerName = GetItem<string>(row, (int)LicenseModelEnum.RegisteredCustomerName),
+                    RegisteredFileName = GetItem<string>(row, (int)LicenseModelEnum.RegisteredFileName),
                     RowId = GetItem<int>(row, (int)LicenseModelEnum.RowId),
                     Status = GetItem<string>(row, (int)LicenseModelEnum.Status),
                     FileId = GetItem<string>(row, (int)LicenseModelEnum.FileId),
@@ -181,7 +245,11 @@ namespace CopyRightPDF.Core
                     LastAccess = GetItem<DateTime?>(row, (int)LicenseModelEnum.LastAccess),
                     MinVersion = GetItem<string>(row, (int)LicenseModelEnum.MinVersion),
                     ExpireDate = GetItem<DateTime?>(row, (int)LicenseModelEnum.ExpireDate),
+                    SpecifiedExpireDate = GetItem<DateTime?>(row, (int)LicenseModelEnum.SpecifiedExpireDate),
+                    ExpireDayCount = GetItem<int?>(row, (int)LicenseModelEnum.ExpireDayCount),
                     IsLocked = GetItem<bool>(row, (int)LicenseModelEnum.IsLocked),
+                    IsDelete = GetItem<bool>(row, (int)LicenseModelEnum.IsDelete),
+                    ActivatedDate = GetItem<DateTime?>(row, (int)(LicenseModelEnum.ActivatedDate)),
                 };
             }
             catch (Exception ex)
@@ -189,14 +257,17 @@ namespace CopyRightPDF.Core
                 throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
             }
         }
-
         private T GetItem<T>(IList<object> items, int index)
         {
             if (items.Count > (int)index)
             {
                 var value = items[(int)index];
 
+                if (String.IsNullOrEmpty(value.ToString()))
+                    return default(T);
+
                 if (typeof(T) == typeof(string)) return (T)value;
+
                 if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
                     int.TryParse(value.ToString(), out int intValue);
@@ -210,7 +281,7 @@ namespace CopyRightPDF.Core
                         return (T)(object)dateValue;
                     }
                 }
-                if (typeof(T) == typeof(bool))
+                if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
                 {
                     if (bool.TryParse(value.ToString(), out bool boolValue))
                     {
@@ -222,14 +293,13 @@ namespace CopyRightPDF.Core
 
             return default;
         }
-
         public bool UpdateLicenseAccessInfo(LicenseModel license)
         {
             try
             {
                 var rowId = license.RowId + 1;
                 var listData = new List<IList<object>> { license.ToListForReaderUpdate };
-                var range = $"{licenseSheetName}!K{rowId}:P{rowId}";
+                var range = $"{licenseSheetName}!P{rowId}:W{rowId}";
 
                 dataAccess.UpdateEntry(listData, range);
                 return true;
@@ -245,7 +315,7 @@ namespace CopyRightPDF.Core
             {
                 var rowId = license.RowId + 1;
                 var listData = new List<IList<object>> { new List<object> { license.IsLocked } };
-                var range = $"{licenseSheetName}!P{rowId}:P{rowId}";
+                var range = $"{licenseSheetName}!W{rowId}:W{rowId}";
 
                 dataAccess.UpdateEntry(listData, range);
                 return true;

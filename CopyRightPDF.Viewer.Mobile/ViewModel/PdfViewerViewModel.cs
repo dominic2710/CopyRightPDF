@@ -401,9 +401,14 @@ namespace CopyRightPDF.Viewer.Mobile
                             continue;
                         }
 
+                        if (String.IsNullOrEmpty(license.ActivatedOS))
+                            license.ActivatedOS = "";
+                        if (String.IsNullOrEmpty(license.ActivatedDeviceMAC))
+                            license.ActivatedDeviceMAC = "";
+
                         //Check MAC Address
                         var localMacAddress = GetAllDeviceMacAddress();
-                        var storedDeviceMAC = license.ActivatedDeviceMAC.Split(SEPARATOR, StringSplitOptions.None).ToList<string>();
+                        var storedDeviceMAC = license.ActivatedDeviceMAC?.Split(SEPARATOR, StringSplitOptions.None).ToList<string>();
 
                         var exist = IsAllowOpen(localMacAddress, storedDeviceMAC);
                         if (!exist)
@@ -413,7 +418,7 @@ namespace CopyRightPDF.Viewer.Mobile
                                 //Check same OS
                                 if (license.ActivatedOS.Contains(CurrentOS))
                                 {
-                                    if (license.PreventSameOS)
+                                    if ((bool)license.PreventSameOS)
                                     {
                                         //Update status to verified
                                         license.IsLocked = false;
@@ -441,6 +446,11 @@ namespace CopyRightPDF.Viewer.Mobile
                                 license.NumberOfActivatedDevice = license.NumberOfActivatedDevice + 1;
                                 license.LastAccess = DateTime.Now;
                                 license.IsLocked = false;
+                                license.ActivatedDate = DateTime.Now.Date;
+                                if (license.ExpireDayCount != null)
+                                {
+                                    license.ExpireDate = DateTime.Now.Date.AddDays((int)license.ExpireDayCount);
+                                }
                                 dataProvider.UpdateLicenseAccessInfo(license);
                             }
                             else
@@ -523,6 +533,7 @@ namespace CopyRightPDF.Viewer.Mobile
 
         bool IsAllowOpen(List<string> localDeviceMAC, List<string> storedDeviceMAC)
         {
+            if (storedDeviceMAC == null) return false;
             if (storedDeviceMAC.Count == 0) return false;
             foreach (string mac in localDeviceMAC)
             {

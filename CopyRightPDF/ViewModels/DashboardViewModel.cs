@@ -32,7 +32,6 @@ namespace CopyRightPDF.ViewModels
         private bool isFilterStatusApproved;
         private bool isFilterStatusOpened;
         private bool isFilterStatusExpired;
-        private int selectedDocumentIndex;
         #endregion
 
         #region Properties
@@ -174,12 +173,6 @@ namespace CopyRightPDF.ViewModels
         }
 
         public List<string> FilterStatuss { get; set; }
-        public int SelectedDocumentIndex
-        {
-            get { return selectedDocumentIndex; }
-            set { selectedDocumentIndex = value; OnPropertyChanged(nameof(SelectedDocumentIndex)); }
-        }
-        public int LastSelectedDocumentIndex { get; set; }
         #endregion
         #region Command
         public ICommand EditDocumentCommand { get; set; }
@@ -262,16 +255,17 @@ namespace CopyRightPDF.ViewModels
             {
                 if (SelectedDocument == null) return;
 
-                DocumentInfoViewModel documentInfoViewModel = new DocumentInfoViewModel(SelectedDocument, false);
+                DocumentInfoViewModel documentInfoViewModel = new DocumentInfoViewModel(SelectedDocument, false, dataProvider);
                 DocumentInfoPage documentInfoPage = new DocumentInfoPage { DataContext = documentInfoViewModel };
                 documentInfoPage.ShowDialog();
 
                 if (documentInfoViewModel.ReturnDocument != null)
                 {
-                    SelectedDocument.FileName = documentInfoViewModel.ReturnDocument.FileName;
-                    SelectedDocument.Description = documentInfoViewModel.ReturnDocument.FileName;
+                    //SelectedDocument.FileName = documentInfoViewModel.ReturnDocument.FileName;
+                    //SelectedDocument.Description = documentInfoViewModel.ReturnDocument.FileName;
 
-                    IsDataChanged = true;
+                    //IsDataChanged = true;
+                    LoadData();
                 }
             });
 
@@ -289,26 +283,28 @@ namespace CopyRightPDF.ViewModels
                 //Add new document
                 DocumentInfoViewModel documentInfoViewModel = new DocumentInfoViewModel(new DocumentModel
                 {
-                    FileId = newFileId
-                }, true);
+                    FileId = newFileId,
+                    IsDelete = false
+                }, true, dataProvider);
                 DocumentInfoPage documentInfoPage = new DocumentInfoPage { DataContext = documentInfoViewModel };
                 documentInfoPage.ShowDialog();
 
                 if (documentInfoViewModel.ReturnDocument != null)
                 {
-                    var newDocument = new DocumentModel
-                    {
-                        FileId = documentInfoViewModel.ReturnDocument.FileId,
-                        FileName = documentInfoViewModel.ReturnDocument.FileName,
-                        Description = documentInfoViewModel.ReturnDocument.Description,
-                        Licenses = new ObservableCollection<LicenseModel>()
-                    };
-                    Documents.Add(newDocument);
+                    //var newDocument = new DocumentModel
+                    //{
+                    //    FileId = documentInfoViewModel.ReturnDocument.FileId,
+                    //    FileName = documentInfoViewModel.ReturnDocument.FileName,
+                    //    Description = documentInfoViewModel.ReturnDocument.Description,
+                    //    Licenses = new ObservableCollection<LicenseModel>()
+                    //};
+                    //Documents.Add(newDocument);
 
-                    OnPropertyChanged(nameof(DocumentsObservable));
-                    SelectedDocument = newDocument;
+                    //OnPropertyChanged(nameof(DocumentsObservable));
+                    //SelectedDocument = newDocument;
 
-                    IsDataChanged = true;
+                    //IsDataChanged = true;
+                    LoadData();
                 }
             });
 
@@ -321,10 +317,11 @@ namespace CopyRightPDF.ViewModels
             {
                 if (SelectedLicense == null) return;
 
-                if (SelectedLicense.Status == "Registered")
-                    SetInitValue(SelectedLicense);
+                var license = selectedLicense.Clone();
+                if (license.Status == "Registered")
+                    SetInitValue(license);
 
-                LicenseInfoViewModel licenseInfoViewModel = new LicenseInfoViewModel(SelectedLicense, false, dataProvider);
+                LicenseInfoViewModel licenseInfoViewModel = new LicenseInfoViewModel(license, false, dataProvider);
                 LicenseInfoPage licenseInfoPage = new LicenseInfoPage { DataContext = licenseInfoViewModel };
                 licenseInfoPage.ShowDialog();
 
@@ -346,54 +343,21 @@ namespace CopyRightPDF.ViewModels
                     PreventPrint = true,
                     PreventSameOS = true,
                     PreventScreenshot = true,
-                    Status = "New",
-                    NumberOfLimitDevice = 2,
-                    ExpireDate = DateTime.Now.AddDays(30),
+                    Status = "Registered",
+                    NumberOfLimitDevice = 1,
+                    ExpireDayCount = 30,
+                    MinVersion = "1.0.0",
                     LastAccess = DateTime.MinValue,
                     IsLocked = false,
-                }, false, dataProvider);
+                    IsDelete = false,
+                }, true, dataProvider);
                 LicenseInfoPage licenseInfoPage = new LicenseInfoPage { DataContext = licenseInfoViewModel };
                 licenseInfoPage.ShowDialog();
 
                 if (licenseInfoViewModel.ReturnLicense != null)
                 {
-                    //var listLicense = SelectedDocument.Licenses.ToList();
-                    //var newLicense = new LicenseModel
-                    //{
-                    //    Status = licenseInfoViewModel.ReturnLicense.Status,
-                    //    FileId = licenseInfoViewModel.ReturnLicense.FileId,
-                    //    CustomerName = licenseInfoViewModel.ReturnLicense.CustomerName,
-                    //    Password = licenseInfoViewModel.ReturnLicense.Password,
-                    //    NumberOfLimitDevice = licenseInfoViewModel.ReturnLicense.NumberOfLimitDevice,
-                    //    PreventPrint = licenseInfoViewModel.ReturnLicense.PreventPrint,
-                    //    PreventSameOS = licenseInfoViewModel.ReturnLicense.PreventSameOS,
-                    //    PreventScreenshot = licenseInfoViewModel.ReturnLicense.PreventScreenshot,
-                    //    NumberOfActivatedDevice = licenseInfoViewModel.ReturnLicense.NumberOfActivatedDevice,
-                    //    ActivatedDeviceMAC = licenseInfoViewModel.ReturnLicense.ActivatedDeviceMAC,
-                    //    ActivatedOS = licenseInfoViewModel.ReturnLicense.ActivatedOS,
-                    //    LastAccess = licenseInfoViewModel.ReturnLicense.LastAccess,
-                    //    MinVersion = licenseInfoViewModel.ReturnLicense.MinVersion,
-                    //    ExpireDate = licenseInfoViewModel.ReturnLicense.ExpireDate,
-                    //};
-                    //listLicense.Add(newLicense);
-
-                    //SelectedDocument.Licenses = new ObservableCollection<LicenseModel>(listLicense);
-                    //OnPropertyChanged(nameof(LicensesObservable));
-                    //SelectedLicense = newLicense;
-
-                    //IsDataChanged = true;
                     LoadData();
                 }
-            });
-
-            UpdateCommand = new RelayCommand<object>(p =>
-            {
-                return true;
-            }, p =>
-            {
-                WaitingForExecUtility.Instance.DoWork(() => dataProvider.UpdateDocument(Documents), "Updating");
-                MessageQueue.Enqueue("Save data completed");
-                IsDataChanged = false;
             });
 
             DeleteDocumentCommand = new RelayCommand<object>(p => { return true; }, p =>
@@ -403,9 +367,11 @@ namespace CopyRightPDF.ViewModels
                 var result = MessageBox.Show($"Delete document {SelectedDocument.FileId} and all license?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.No) return;
 
-                Documents.Remove(SelectedDocument);
-                OnPropertyChanged(nameof(DocumentsObservable));
-                IsDataChanged = true;
+                //Documents.Remove(SelectedDocument);
+                //OnPropertyChanged(nameof(DocumentsObservable));
+                //IsDataChanged = true;
+                DeleteDocument();
+                LoadData();
             });
 
             DeleteLicenseCommand = new RelayCommand<object>(p => { return true; }, p =>
@@ -413,11 +379,13 @@ namespace CopyRightPDF.ViewModels
                 if (SelectedDocument == null) return;
                 if (SelectedLicense == null) return;
 
-                var result = MessageBox.Show($"Delete license for {SelectedLicense.CustomerName}?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
+                var result = MessageBox.Show($"Delete license for {SelectedLicense.RegisteredCustomerName}?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.No) return;
 
-                SelectedDocument.Licenses.Remove(SelectedLicense);
-                IsDataChanged = true;
+                //SelectedDocument.Licenses.Remove(SelectedLicense);
+                //IsDataChanged = true;
+                DeleteLicense();
+                LoadData();
             });
             ApproveLicenseCommand = new RelayCommand<object>(p => { return true; }, p =>
             {
@@ -426,40 +394,14 @@ namespace CopyRightPDF.ViewModels
                 var result = MessageBox.Show($"Approve license for {SelectedLicense.RegisteredCustomerName}?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.No) return;
 
-                WaitingForExecUtility.Instance.DoWork(() =>
-                {
-                    try
-                    {
-                        SetInitValue(SelectedLicense);
-                        SelectedLicense.Status = "Approving";
-                        dataProvider.ApproveLicense(SelectedLicense);
-
-                        LastSelectedDocumentIndex = DocumentsObservable.IndexOf(SelectedDocument);
-                        Documents = dataProvider.GetDocument();
-
-                        OnPropertyChanged(nameof(DocumentsObservable));
-                        SelectedDocument = DocumentsObservable[LastSelectedDocumentIndex];
-
-                        IsDataChanged = false;
-                        MessageQueue.Enqueue("Approved license");
-                    }
-                    catch (Exception ex)
-                    {
-                        SelectedLicense.Status = "Registered";
-                        MessageQueue.Enqueue(ex.Message);
-                    }
-                }, "Approving");
+                ApproveLicense();
+                SendApproveMail();
+                LoadData();
             });
         }
 
         private void LoadData()
         {
-            //if (IsDataChanged)
-            //{
-            //    var result = MessageBox.Show($"The data has been changed but not saved. Do you still want to reload?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
-            //    if (result == MessageBoxResult.No) return;
-            //}
-            LastSelectedDocumentIndex = SelectedDocumentIndex;
             WaitingForExecUtility.Instance.DoWork(() =>
             {
                 try
@@ -473,10 +415,87 @@ namespace CopyRightPDF.ViewModels
                 }
 
             }, "Loading");
-            SelectedDocumentIndex = LastSelectedDocumentIndex;
-            OnPropertyChanged(nameof(SelectedDocumentIndex));
 
             MessageQueue.Enqueue("Reload data completed");
+        }
+
+        private void ApproveLicense()
+        {
+            WaitingForExecUtility.Instance.DoWork(() =>
+            {
+                try
+                {
+                    var license = SelectedLicense.Clone();
+
+                    SetInitValue(license);
+                    license.Status = "Approved";
+                    dataProvider.ApproveLicense(license);
+
+                    MessageQueue.Enqueue("Approved license");
+                }
+                catch (Exception ex)
+                {
+                    MessageQueue.Enqueue(ex.Message);
+                }
+            }, "Approving");
+        }
+
+        private void SendApproveMail()
+        {
+            WaitingForExecUtility.Instance.DoWork(() =>
+            {
+                try
+                {
+                    var mailProvider = new MailProvider();
+                    mailProvider.SendApproveMail(Properties.Settings.Default.Host,
+                                                 Properties.Settings.Default.Port,
+                                                 Properties.Settings.Default.Username,
+                                                 Properties.Settings.Default.Password,
+                                                 Properties.Settings.Default.Subject,
+                                                 Properties.Settings.Default.Body,
+                                                 SelectedLicense);
+                    MessageQueue.Enqueue("Send mail completed");
+                }
+                catch (Exception ex)
+                {
+                    MessageQueue.Enqueue(ex.Message);
+                }
+
+            }, "Sending Mail");
+        }
+
+        private void DeleteDocument()
+        {
+            WaitingForExecUtility.Instance.DoWork(() =>
+            {
+                try
+                {
+                    dataProvider.DeleteDocument(SelectedDocument);
+                    MessageQueue.Enqueue("Delete document completed");
+                }
+                catch (Exception ex)
+                {
+                    MessageQueue.Enqueue(ex.Message);
+                }
+
+            }, "Deleting License");
+        }
+
+        private void DeleteLicense()
+        {
+            WaitingForExecUtility.Instance.DoWork(() =>
+            {
+                try
+                {
+                    dataProvider.DeleteLicense(SelectedLicense);
+                    MessageQueue.Enqueue("Delete license completed");
+                }
+                catch (Exception ex)
+                {
+                    MessageQueue.Enqueue(ex.Message);
+                }
+
+            }, "Deleting License");
         }
 
         void SetInitValue(LicenseModel model)

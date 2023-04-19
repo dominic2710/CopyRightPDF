@@ -14,6 +14,7 @@ namespace CopyRightPDF.Core.Models
         private string _fileName;
         private string _description;
         private ObservableCollection<LicenseModel> _licenses;
+        private bool _isDelete;
 
         public int RowId
         {
@@ -45,11 +46,20 @@ namespace CopyRightPDF.Core.Models
             set { _licenses = value; OnPropertyChanged(nameof(Licenses)); }
         }
 
+        public bool IsDelete
+        {
+            get => _isDelete;
+            set
+            {
+                _isDelete = value; OnPropertyChanged(nameof(IsDelete));
+            }
+        }
+
         public IList<object> ToList
         {
             get
             {
-                return new List<object> { "=ROW() - 1", FileId, FileName, Description };
+                return new List<object> { "=ROW() - 1", FileId, FileName, Description, IsDelete };
             }
         }
     }
@@ -59,6 +69,7 @@ namespace CopyRightPDF.Core.Models
         RowId = 0,
         FileId,
         FileName,
-        Description
+        Description,
+        IsDelete
     }
 }

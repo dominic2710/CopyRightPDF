@@ -69,6 +69,7 @@
     <Compile Include="AesOperation.cs" />
     <Compile Include="CopyRightPDFDataProvider.cs" />
     <Compile Include="GoogleSheetDataAccess.cs" />
+    <Compile Include="MailProvider.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\DocumentModel.cs" />
     <Compile Include="Models\LicenseModel.cs" />

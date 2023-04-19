@@ -9,7 +9,7 @@
     xmlns:viewModels="clr-namespace:CopyRightPDF.ViewModels"
     Title="{Binding WindowTitle}"
     Width="780"
-    Height="420"
+    Height="450"
     Background="#2f3640"
     FontFamily="Segou UI"
     FontSize="14"
@@ -29,9 +29,11 @@
                 VerticalAlignment="Center"
                 Text="File Id"
                 TextAlignment="Right" />
-            <TextBlock
+            <TextBox
                 Width="400"
                 VerticalAlignment="Center"
+                IsReadOnly="True"
+                Style="{DynamicResource MaterialDesignOutlinedTextBox}"
                 Text="{Binding FileId}" />
             <materialDesign:PackIcon
                 Width="30"

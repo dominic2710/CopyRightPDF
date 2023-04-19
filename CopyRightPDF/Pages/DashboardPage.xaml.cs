@@ -73,5 +73,30 @@ namespace CopyRightPDF.Pages
                 return;
             }
         }
+
+        int LastSelectedDocumentIndex = -1;
+        int LastSelectedLicenseIndex = -1;
+
+        private void dtgDocuments_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            dtgDocuments.SelectedIndex = LastSelectedDocumentIndex;
+        }
+
+        private void dtgDocuments_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dtgDocuments.SelectedIndex < 0) return;
+            LastSelectedDocumentIndex = dtgDocuments.SelectedIndex;
+        }
+
+        private void dtgLicenses_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            dtgLicenses.SelectedIndex = LastSelectedLicenseIndex;
+        }
+
+        private void dtgLicenses_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dtgLicenses.SelectedIndex < 0) return;
+            LastSelectedLicenseIndex = dtgLicenses.SelectedIndex;
+        }
     }
 }

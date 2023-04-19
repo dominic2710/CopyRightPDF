@@ -32,6 +32,7 @@ namespace CopyRightPDF.Core.Models
         private DateTime? _specifiedExpireDate;
         private int? _expireDayCount;
         private bool _isLocked;
+        private bool _isDelete;
         // Public properties
         public string RegisteredEmail
         {
@@ -171,7 +172,11 @@ namespace CopyRightPDF.Core.Models
             get { return _isLocked; }
             set { _isLocked = value; OnPropertyChanged(nameof(IsLocked)); }
         }
-
+        public bool IsDelete
+        {
+            get { return _isDelete; }
+            set { _isDelete = value; OnPropertyChanged(nameof(IsDelete)); }
+        }
         public IList<object> ToList
         {
             get
@@ -189,9 +194,26 @@ namespace CopyRightPDF.Core.Models
                                             PreventSameOS,
                                             PreventScreenshot,
                                             MinVersion,
-                                            ExpireDate,
                                             SpecifiedExpireDate,
                                             ExpireDayCount,
+                                            ExpireDate,
+                                            Status,
+                                            ActivatedDate,
+                                            NumberOfActivatedDevice,
+                                            ActivatedDeviceMAC,
+                                            ActivatedOS,
+                                            LastAccess,
+                                            IsLocked,
+                                            IsDelete,
+                                        };
+            }
+        }
+
+        public IList<object> ToListForReaderUpdate
+        {
+            get
+            {
+                return new List<object>() { ExpireDate,
                                             Status,
                                             ActivatedDate,
                                             NumberOfActivatedDevice,
@@ -203,19 +225,35 @@ namespace CopyRightPDF.Core.Models
             }
         }
 
-        public IList<object> ToListForReaderUpdate
+        public LicenseModel Clone()
         {
-            get
+            return new LicenseModel()
             {
-                return new List<object>() { Status,
-                                            ActivatedDate,
-                                            NumberOfActivatedDevice,
-                                            ActivatedDeviceMAC,
-                                            ActivatedOS,
-                                            LastAccess,
-                                            IsLocked
-                                        };
-            }
+                ActivatedDate = ActivatedDate,
+                NumberOfActivatedDevice = NumberOfActivatedDevice,
+                ActivatedDeviceMAC = ActivatedOS,
+                ActivatedOS = ActivatedOS,
+                LastAccess = LastAccess,
+                IsLocked = IsLocked,
+                CustomerName = CustomerName,
+                ExpireDate = ExpireDate,
+                ExpireDayCount = ExpireDayCount,
+                FileId = FileId,
+                MinVersion = MinVersion,
+                NumberOfLimitDevice = NumberOfLimitDevice,
+                Password = Password,
+                PreventPrint = PreventPrint,
+                PreventSameOS = PreventSameOS,
+                PreventScreenshot = PreventScreenshot,
+                RegisteredCustomerName = RegisteredCustomerName,
+                RegisteredEmail = RegisteredEmail,
+                RegisteredFileName = RegisteredFileName,
+                RegisteredPhoneNumber = RegisteredPhoneNumber,
+                RowId = RowId,
+                SpecifiedExpireDate = SpecifiedExpireDate,
+                Status = Status,
+                IsDelete = IsDelete,
+            };
         }
     }
 
@@ -234,15 +272,16 @@ namespace CopyRightPDF.Core.Models
         PreventSameOS,
         PreventScreenshot,
         MinVersion,
-        ExpireDate,
         SpecifiedExpireDate,
         ExpireDayCount,
+        ExpireDate,
         Status,
         ActivatedDate,
         NumberOfActivatedDevice,
         ActivatedDeviceMAC,
         ActivatedOS,
         LastAccess,
-        IsLocked
+        IsLocked,
+        IsDelete
     }
 }

@@ -261,20 +261,27 @@ namespace CopyRightPDF.ViewModels
                     || ExpireDate != InputLicense.ExpireDate;
             }
         }
+        public CopyRightPDFDataProvider DataProvider { get; set; }
+        public string OKButtonContent
+        {
+            get { return String.IsNullOrEmpty(Status) || Status == "Registered" ? "Approve and Send mail" : "Save"; }
+        }
         #endregion
 
         #region Command
         public ICommand ReloadCommand { get; set; }
         public ICommand OKCommand { get; set; }
-        #endregion  
+        public ICommand ResendMailCommand { get; set; }
 
         public LicenseInfoViewModel() { }
+        #endregion
         public LicenseInfoViewModel(LicenseModel license, bool isAddNew, CopyRightPDFDataProvider dataProvider)
         {
             InputLicense = license;
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(1));
             ReturnLicense = null;
             IsAddNew = isAddNew;
+            DataProvider = dataProvider;
 
             Init(license);
 
@@ -309,60 +316,67 @@ namespace CopyRightPDF.ViewModels
                 var result = MessageBox.Show("Save changes and approve license?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.No) return;
 
-                //Approve license
-                WaitingForExecUtility.Instance.DoWork(() =>
+                var newLicense = new LicenseModel()
                 {
-                    try
-                    {
-                        license.Status = "Approving";
-                        if (IsAddNew)
-                        {
-                            dataProvider.AddLicense(license);
-                        }
-                        else
-                        {
-                            dataProvider.ApproveLicense(license);
-                        }
-                        MessageQueue.Enqueue("Approved license");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageQueue.Enqueue(ex.Message);
-                        return;
-                    }
-                }, "Approving");
-
-                //Send mail here
-
-                ReturnLicense = new LicenseModel
-                {
-                    Status = Status,
+                    ActivatedDate = ActivatedDate,
+                    NumberOfActivatedDevice = NumberOfActivatedDevice,
+                    ActivatedDeviceMAC = ActivatedOS,
+                    ActivatedOS = ActivatedOS,
+                    LastAccess = LastAccess,
+                    IsLocked = false,
+                    CustomerName = RegisteredCustomerName,
+                    ExpireDate = ExpireDate,
+                    ExpireDayCount = ExpireDayCount,
                     FileId = FileId,
-                    CustomerName = CustomerName,
-                    Password = Password,
+                    MinVersion = MinVersion,
                     NumberOfLimitDevice = NumberOfLimitDevice,
+                    Password = RegisteredPhoneNumber,
                     PreventPrint = PreventPrint,
                     PreventSameOS = PreventSameOS,
                     PreventScreenshot = PreventScreenshot,
-                    NumberOfActivatedDevice = NumberOfActivatedDevice,
-                    ActivatedDeviceMAC = ActivatedDeviceMAC,
-                    ActivatedOS = ActivatedOS,
-                    LastAccess = LastAccess,
-                    MinVersion = MinVersion,
-                    ExpireDate = ExpireDate
+                    RegisteredCustomerName = RegisteredCustomerName,
+                    RegisteredEmail = RegisteredEmail,
+                    RegisteredFileName = RegisteredFileName,
+                    RegisteredPhoneNumber = RegisteredPhoneNumber,
+                    RowId = RowId,
+                    SpecifiedExpireDate = SpecifiedExpireDate,
+                    Status = "Approved",
+                    IsDelete = false,
                 };
 
+                //Approve license
+                ApproveLicense(newLicense);
+
+                //Send mail here
+                SendApproveMail(newLicense);
+
+                ReturnLicense = newLicense;
+
                 RequestClose(this, EventArgs.Empty);
+            });
+
+            ResendMailCommand = new RelayCommand<object>(p =>
+            {
+                if (String.IsNullOrEmpty(Status) || Status == "Registered")
+                    return false;
+
+                return true;
+            }, p =>
+            {
+                SendApproveMail(license);
             });
         }
 
         private string CheckInput()
         {
-            if (String.IsNullOrEmpty(CustomerName))
+            if (String.IsNullOrEmpty(RegisteredCustomerName))
                 return "Customer name must be input";
 
-            if (String.IsNullOrEmpty(Password))
-                return "Password must be input";
+            if (String.IsNullOrEmpty(RegisteredPhoneNumber))
+                return "Phone number must be input";
+
+            if (String.IsNullOrEmpty(RegisteredEmail))
+                return "Email must be input";
 
             if (String.IsNullOrEmpty(MinVersion))
                 return "Min version must be input";
@@ -381,9 +395,9 @@ namespace CopyRightPDF.ViewModels
             CustomerName = license.CustomerName;
             Password = license.Password;
             NumberOfLimitDevice = license.NumberOfLimitDevice;
-            PreventPrint = license.PreventPrint;
-            PreventSameOS = license.PreventSameOS;
-            PreventScreenshot = license.PreventScreenshot;
+            PreventPrint = (bool)license.PreventPrint;
+            PreventSameOS = (bool)license.PreventSameOS;
+            PreventScreenshot = (bool)license.PreventScreenshot;
             ActivatedDate = license.ActivatedDate;
             NumberOfActivatedDevice = license.NumberOfActivatedDevice;
             ActivatedDeviceMAC = license.ActivatedDeviceMAC;
@@ -399,6 +413,52 @@ namespace CopyRightPDF.ViewModels
                 IsExpireDayCount = true;
             else
                 IsNeverExpire = true;
+        }
+        private void ApproveLicense(LicenseModel license)
+        {
+            WaitingForExecUtility.Instance.DoWork(() =>
+            {
+                try
+                {
+                    if (IsAddNew)
+                    {
+                        DataProvider.AddLicense(license);
+                    }
+                    else
+                    {
+                        DataProvider.ApproveLicense(license);
+                    }
+                    MessageQueue.Enqueue("Approved license");
+                }
+                catch (Exception ex)
+                {
+                    MessageQueue.Enqueue(ex.Message);
+                    return;
+                }
+            }, "Approving");
+        }
+        private void SendApproveMail(LicenseModel license)
+        {
+            WaitingForExecUtility.Instance.DoWork(() =>
+            {
+                try
+                {
+                    var mailProvider = new MailProvider();
+                    mailProvider.SendApproveMail(Properties.Settings.Default.Host,
+                                                 Properties.Settings.Default.Port,
+                                                 Properties.Settings.Default.Username,
+                                                 Properties.Settings.Default.Password,
+                                                 Properties.Settings.Default.Subject,
+                                                 Properties.Settings.Default.Body,
+                                                 license);
+                    MessageQueue.Enqueue("Send mail completed");
+                }
+                catch (Exception ex)
+                {
+                    MessageQueue.Enqueue(ex.Message);
+                }
+
+            }, "Sending Mail");
         }
     }
 }
