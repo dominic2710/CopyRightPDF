@@ -11,6 +11,7 @@
     Width="1600"
     Height="1020"
     Background="#FF252525"
+    Closed="Window_Closed"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.DataContext>

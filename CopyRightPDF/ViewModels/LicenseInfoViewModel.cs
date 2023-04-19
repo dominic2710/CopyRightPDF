@@ -397,9 +397,9 @@ namespace CopyRightPDF.ViewModels
             CustomerName = license.CustomerName;
             Password = license.Password;
             NumberOfLimitDevice = license.NumberOfLimitDevice;
-            PreventPrint = (bool)license.PreventPrint;
-            PreventSameOS = (bool)license.PreventSameOS;
-            PreventScreenshot = (bool)license.PreventScreenshot;
+            PreventPrint = license.PreventPrint;
+            PreventSameOS = license.PreventSameOS;
+            PreventScreenshot = license.PreventScreenshot;
             ActivatedDate = license.ActivatedDate;
             NumberOfActivatedDevice = license.NumberOfActivatedDevice;
             ActivatedDeviceMAC = license.ActivatedDeviceMAC;

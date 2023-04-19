@@ -226,10 +226,6 @@ namespace CopyRightPDF.ViewModels
 
                 if (documentInfoViewModel.ReturnDocument != null)
                 {
-                    //SelectedDocument.FileName = documentInfoViewModel.ReturnDocument.FileName;
-                    //SelectedDocument.Description = documentInfoViewModel.ReturnDocument.FileName;
-
-                    //IsDataChanged = true;
                     LoadData();
                 }
             });
@@ -256,19 +252,6 @@ namespace CopyRightPDF.ViewModels
 
                 if (documentInfoViewModel.ReturnDocument != null)
                 {
-                    //var newDocument = new DocumentModel
-                    //{
-                    //    FileId = documentInfoViewModel.ReturnDocument.FileId,
-                    //    FileName = documentInfoViewModel.ReturnDocument.FileName,
-                    //    Description = documentInfoViewModel.ReturnDocument.Description,
-                    //    Licenses = new ObservableCollection<LicenseModel>()
-                    //};
-                    //Documents.Add(newDocument);
-
-                    //OnPropertyChanged(nameof(DocumentsObservable));
-                    //SelectedDocument = newDocument;
-
-                    //IsDataChanged = true;
                     LoadData();
                 }
             });
@@ -310,7 +293,6 @@ namespace CopyRightPDF.ViewModels
                     PreventScreenshot = true,
                     Status = "Registered",
                     NumberOfLimitDevice = 1,
-                    ExpireDayCount = 30,
                     MinVersion = "1.0.0",
                     LastAccess = DateTime.MinValue,
                     IsLocked = false,
@@ -332,9 +314,6 @@ namespace CopyRightPDF.ViewModels
                 var result = MessageBox.Show($"Delete document {SelectedDocument.FileId} and all license?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.No) return;
 
-                //Documents.Remove(SelectedDocument);
-                //OnPropertyChanged(nameof(DocumentsObservable));
-                //IsDataChanged = true;
                 DeleteDocument();
                 LoadData();
             });
@@ -347,8 +326,6 @@ namespace CopyRightPDF.ViewModels
                 var result = MessageBox.Show($"Delete license for {SelectedLicense.RegisteredCustomerName}?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.No) return;
 
-                //SelectedDocument.Licenses.Remove(SelectedLicense);
-                //IsDataChanged = true;
                 DeleteLicense();
                 LoadData();
             });
@@ -472,7 +449,6 @@ namespace CopyRightPDF.ViewModels
             model.PreventSameOS = true;
             model.PreventScreenshot = true;
             model.MinVersion = "1.0.0";
-            model.ExpireDayCount = 30;
         }
     }
 }

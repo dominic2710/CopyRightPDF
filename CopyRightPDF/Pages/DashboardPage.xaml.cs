@@ -26,8 +26,8 @@ namespace CopyRightPDF.Pages
             string errorMessage = String.Empty;
             string missingParam = String.Empty;
 
-            if (!System.IO.File.Exists("App.config"))
-                errorMessage = "App.config not found!";
+            if (!System.IO.File.Exists("CopyRightPDF.exe.config"))
+                errorMessage = "CopyRightPDF.exe.config not found!";
 
             if (!String.IsNullOrEmpty(errorMessage))
             {
@@ -97,6 +97,11 @@ namespace CopyRightPDF.Pages
         {
             if (dtgLicenses.SelectedIndex < 0) return;
             LastSelectedLicenseIndex = dtgLicenses.SelectedIndex;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            App.Current.Shutdown();
         }
     }
 }
