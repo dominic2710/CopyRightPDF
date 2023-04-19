@@ -28,9 +28,11 @@ namespace CopyRightPDF.ViewModels
         private CopyRightPDFDataProvider dataProvider;
         private string filterDocumentName;
         private string filterLicenseName;
-        private bool isFilterStatusNew;
+        private bool isFilterStatusRegistered;
+        private bool isFilterStatusApproved;
         private bool isFilterStatusOpened;
         private bool isFilterStatusExpired;
+        private int selectedDocumentIndex;
         #endregion
 
         #region Properties
@@ -103,17 +105,34 @@ namespace CopyRightPDF.ViewModels
             }
         }
 
-        public bool IsFilterStatusNew
+        public bool IsFilterStatusRegistered
         {
-            get { return isFilterStatusNew; }
+            get { return isFilterStatusRegistered; }
             set
             {
-                isFilterStatusNew = value;
+                isFilterStatusRegistered = value;
 
-                if (isFilterStatusNew)
-                    FilterStatuss.Add("New");
+                if (isFilterStatusRegistered)
+                    FilterStatuss.Add("Registered");
                 else
-                    FilterStatuss.Remove("New");
+                    FilterStatuss.Remove("Registered");
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(LicensesObservable));
+            }
+        }
+
+        public bool IsFilterStatusApproved
+        {
+            get { return isFilterStatusApproved; }
+            set
+            {
+                isFilterStatusApproved = value;
+
+                if (isFilterStatusApproved)
+                    FilterStatuss.Add("Approved");
+                else
+                    FilterStatuss.Remove("Approved");
 
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(LicensesObservable));
@@ -155,7 +174,12 @@ namespace CopyRightPDF.ViewModels
         }
 
         public List<string> FilterStatuss { get; set; }
-
+        public int SelectedDocumentIndex
+        {
+            get { return selectedDocumentIndex; }
+            set { selectedDocumentIndex = value; OnPropertyChanged(nameof(SelectedDocumentIndex)); }
+        }
+        public int LastSelectedDocumentIndex { get; set; }
         #endregion
         #region Command
         public ICommand EditDocumentCommand { get; set; }
@@ -166,6 +190,7 @@ namespace CopyRightPDF.ViewModels
         public ICommand ReloadCommand { get; set; }
         public ICommand DeleteDocumentCommand { get; set; }
         public ICommand DeleteLicenseCommand { get; set; }
+        public ICommand ApproveLicenseCommand { get; set; }
         #endregion
 
         public DashboardViewModel()
@@ -182,7 +207,8 @@ namespace CopyRightPDF.ViewModels
             FilterStatuss = new List<string>();
 
             IsDataChanged = false;
-            IsFilterStatusNew = true;
+            IsFilterStatusRegistered = true;
+            IsFilterStatusApproved = true;
             IsFilterStatusOpened = true;
             IsFilterStatusExpired = true;
 
@@ -295,28 +321,16 @@ namespace CopyRightPDF.ViewModels
             {
                 if (SelectedLicense == null) return;
 
-                LicenseInfoViewModel licenseInfoViewModel = new LicenseInfoViewModel(SelectedLicense, false);
+                if (SelectedLicense.Status == "Registered")
+                    SetInitValue(SelectedLicense);
+
+                LicenseInfoViewModel licenseInfoViewModel = new LicenseInfoViewModel(SelectedLicense, false, dataProvider);
                 LicenseInfoPage licenseInfoPage = new LicenseInfoPage { DataContext = licenseInfoViewModel };
                 licenseInfoPage.ShowDialog();
 
                 if (licenseInfoViewModel.ReturnLicense != null)
                 {
-                    SelectedLicense.Status = licenseInfoViewModel.ReturnLicense.Status;
-                    SelectedLicense.FileId = licenseInfoViewModel.ReturnLicense.FileId;
-                    SelectedLicense.CustomerName = licenseInfoViewModel.ReturnLicense.CustomerName;
-                    SelectedLicense.Password = licenseInfoViewModel.ReturnLicense.Password;
-                    SelectedLicense.NumberOfLimitDevice = licenseInfoViewModel.ReturnLicense.NumberOfLimitDevice;
-                    SelectedLicense.PreventPrint = licenseInfoViewModel.ReturnLicense.PreventPrint;
-                    SelectedLicense.PreventSameOS = licenseInfoViewModel.ReturnLicense.PreventSameOS;
-                    SelectedLicense.PreventScreenshot = licenseInfoViewModel.ReturnLicense.PreventScreenshot;
-                    SelectedLicense.NumberOfActivatedDevice = licenseInfoViewModel.ReturnLicense.NumberOfActivatedDevice;
-                    SelectedLicense.ActivatedDeviceMAC = licenseInfoViewModel.ReturnLicense.ActivatedDeviceMAC;
-                    SelectedLicense.ActivatedOS = licenseInfoViewModel.ReturnLicense.ActivatedOS;
-                    SelectedLicense.LastAccess = licenseInfoViewModel.ReturnLicense.LastAccess;
-                    SelectedLicense.MinVersion = licenseInfoViewModel.ReturnLicense.MinVersion;
-                    SelectedLicense.ExpireDate = licenseInfoViewModel.ReturnLicense.ExpireDate;
-
-                    IsDataChanged = true;
+                    LoadData();
                 }
             });
 
@@ -337,37 +351,38 @@ namespace CopyRightPDF.ViewModels
                     ExpireDate = DateTime.Now.AddDays(30),
                     LastAccess = DateTime.MinValue,
                     IsLocked = false,
-                }, false);
+                }, false, dataProvider);
                 LicenseInfoPage licenseInfoPage = new LicenseInfoPage { DataContext = licenseInfoViewModel };
                 licenseInfoPage.ShowDialog();
 
                 if (licenseInfoViewModel.ReturnLicense != null)
                 {
-                    var listLicense = SelectedDocument.Licenses.ToList();
-                    var newLicense = new LicenseModel
-                    {
-                        Status = licenseInfoViewModel.ReturnLicense.Status,
-                        FileId = licenseInfoViewModel.ReturnLicense.FileId,
-                        CustomerName = licenseInfoViewModel.ReturnLicense.CustomerName,
-                        Password = licenseInfoViewModel.ReturnLicense.Password,
-                        NumberOfLimitDevice = licenseInfoViewModel.ReturnLicense.NumberOfLimitDevice,
-                        PreventPrint = licenseInfoViewModel.ReturnLicense.PreventPrint,
-                        PreventSameOS = licenseInfoViewModel.ReturnLicense.PreventSameOS,
-                        PreventScreenshot = licenseInfoViewModel.ReturnLicense.PreventScreenshot,
-                        NumberOfActivatedDevice = licenseInfoViewModel.ReturnLicense.NumberOfActivatedDevice,
-                        ActivatedDeviceMAC = licenseInfoViewModel.ReturnLicense.ActivatedDeviceMAC,
-                        ActivatedOS = licenseInfoViewModel.ReturnLicense.ActivatedOS,
-                        LastAccess = licenseInfoViewModel.ReturnLicense.LastAccess,
-                        MinVersion = licenseInfoViewModel.ReturnLicense.MinVersion,
-                        ExpireDate = licenseInfoViewModel.ReturnLicense.ExpireDate,
-                    };
-                    listLicense.Add(newLicense);
+                    //var listLicense = SelectedDocument.Licenses.ToList();
+                    //var newLicense = new LicenseModel
+                    //{
+                    //    Status = licenseInfoViewModel.ReturnLicense.Status,
+                    //    FileId = licenseInfoViewModel.ReturnLicense.FileId,
+                    //    CustomerName = licenseInfoViewModel.ReturnLicense.CustomerName,
+                    //    Password = licenseInfoViewModel.ReturnLicense.Password,
+                    //    NumberOfLimitDevice = licenseInfoViewModel.ReturnLicense.NumberOfLimitDevice,
+                    //    PreventPrint = licenseInfoViewModel.ReturnLicense.PreventPrint,
+                    //    PreventSameOS = licenseInfoViewModel.ReturnLicense.PreventSameOS,
+                    //    PreventScreenshot = licenseInfoViewModel.ReturnLicense.PreventScreenshot,
+                    //    NumberOfActivatedDevice = licenseInfoViewModel.ReturnLicense.NumberOfActivatedDevice,
+                    //    ActivatedDeviceMAC = licenseInfoViewModel.ReturnLicense.ActivatedDeviceMAC,
+                    //    ActivatedOS = licenseInfoViewModel.ReturnLicense.ActivatedOS,
+                    //    LastAccess = licenseInfoViewModel.ReturnLicense.LastAccess,
+                    //    MinVersion = licenseInfoViewModel.ReturnLicense.MinVersion,
+                    //    ExpireDate = licenseInfoViewModel.ReturnLicense.ExpireDate,
+                    //};
+                    //listLicense.Add(newLicense);
 
-                    SelectedDocument.Licenses = new ObservableCollection<LicenseModel>(listLicense);
-                    OnPropertyChanged(nameof(LicensesObservable));
-                    SelectedLicense = newLicense;
+                    //SelectedDocument.Licenses = new ObservableCollection<LicenseModel>(listLicense);
+                    //OnPropertyChanged(nameof(LicensesObservable));
+                    //SelectedLicense = newLicense;
 
-                    IsDataChanged = true;
+                    //IsDataChanged = true;
+                    LoadData();
                 }
             });
 
@@ -404,24 +419,76 @@ namespace CopyRightPDF.ViewModels
                 SelectedDocument.Licenses.Remove(SelectedLicense);
                 IsDataChanged = true;
             });
+            ApproveLicenseCommand = new RelayCommand<object>(p => { return true; }, p =>
+            {
+                if (SelectedLicense == null) return;
+
+                var result = MessageBox.Show($"Approve license for {SelectedLicense.RegisteredCustomerName}?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.No) return;
+
+                WaitingForExecUtility.Instance.DoWork(() =>
+                {
+                    try
+                    {
+                        SetInitValue(SelectedLicense);
+                        SelectedLicense.Status = "Approving";
+                        dataProvider.ApproveLicense(SelectedLicense);
+
+                        LastSelectedDocumentIndex = DocumentsObservable.IndexOf(SelectedDocument);
+                        Documents = dataProvider.GetDocument();
+
+                        OnPropertyChanged(nameof(DocumentsObservable));
+                        SelectedDocument = DocumentsObservable[LastSelectedDocumentIndex];
+
+                        IsDataChanged = false;
+                        MessageQueue.Enqueue("Approved license");
+                    }
+                    catch (Exception ex)
+                    {
+                        SelectedLicense.Status = "Registered";
+                        MessageQueue.Enqueue(ex.Message);
+                    }
+                }, "Approving");
+            });
         }
 
         private void LoadData()
         {
-            if (IsDataChanged)
-            {
-                var result = MessageBox.Show($"The data has been changed but not saved. Do you still want to reload?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.No) return;
-            }
-
+            //if (IsDataChanged)
+            //{
+            //    var result = MessageBox.Show($"The data has been changed but not saved. Do you still want to reload?", "Copyright PDF - Writer", MessageBoxButton.YesNo);
+            //    if (result == MessageBoxResult.No) return;
+            //}
+            LastSelectedDocumentIndex = SelectedDocumentIndex;
             WaitingForExecUtility.Instance.DoWork(() =>
             {
-                Documents = dataProvider.GetDocument();
-                OnPropertyChanged(nameof(DocumentsObservable));
+                try
+                {
+                    Documents = dataProvider.GetDocument();
+                    OnPropertyChanged(nameof(DocumentsObservable));
+                }
+                catch (Exception ex)
+                {
+                    MessageQueue.Enqueue(ex.Message);
+                }
 
             }, "Loading");
+            SelectedDocumentIndex = LastSelectedDocumentIndex;
+            OnPropertyChanged(nameof(SelectedDocumentIndex));
 
             MessageQueue.Enqueue("Reload data completed");
+        }
+
+        void SetInitValue(LicenseModel model)
+        {
+            model.Password = model.RegisteredPhoneNumber;
+            model.CustomerName = model.RegisteredCustomerName;
+            model.NumberOfLimitDevice = 1;
+            model.PreventPrint = true;
+            model.PreventSameOS = true;
+            model.PreventScreenshot = true;
+            model.MinVersion = "1.0.0";
+            model.ExpireDayCount = 30;
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using CopyRightPDF.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace CopyRightPDF.Core
 {
@@ -35,9 +37,44 @@ namespace CopyRightPDF.Core
                 {
                     listData.AddRange(doc.Licenses.Select(x => x.ToList).ToList());
                 }
-                range = $"{licenseSheetName}!A:P";
+                range = $"{licenseSheetName}!A:W";
 
                 dataAccess.CreateEntry(listData, range);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
+            }
+        }
+
+        public bool AddLicense(LicenseModel license)
+        {
+            try
+            {
+                var listData = new List<IList<object>> { license.ToList };
+                var range = $"{licenseSheetName}!A:T";
+
+                dataAccess.CreateEntry(listData, range);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while processing.\r\n{ex.Message}");
+            }
+        }
+
+        public bool ApproveLicense(LicenseModel license)
+        {
+            try
+            {
+                license.Status = "Approved";
+                var rowId = license.RowId + 1;
+                var listData = new List<IList<object>> { license.ToList };
+                var range = $"{licenseSheetName}!A{rowId}:W{rowId}";
+
+                dataAccess.UpdateEntry(listData, range);
+
                 return true;
             }
             catch (Exception ex)
@@ -53,16 +90,25 @@ namespace CopyRightPDF.Core
                 var range = $"{documentSheetName}!A:D";
                 var documentData = dataAccess.GetEntry(range);
 
-                range = $"{licenseSheetName}!A:P";
+                range = $"{licenseSheetName}!A:W";
                 var licensesData = dataAccess.GetEntry(range);
 
                 var licenses = new List<LicenseModel>();
+                var rowId = 0;
                 foreach (var row in licensesData)
                 {
+                    rowId++;
+                    var status = GetItem<string>(row, (int)LicenseModelEnum.Status);
+                    if (String.IsNullOrEmpty(status))
+                        status = "Registered";
                     licenses.Add(new LicenseModel
                     {
-                        RowId = GetItem<int>(row, (int)LicenseModelEnum.RowId),
-                        Status = GetItem<string>(row, (int)LicenseModelEnum.Status),
+                        RegisteredEmail = GetItem<string>(row, (int)LicenseModelEnum.RegisteredEmail),
+                        RegisteredPhoneNumber = GetItem<string>(row, (int)LicenseModelEnum.RegisteredPhoneNumber),
+                        RegisteredCustomerName = GetItem<string>(row, (int)LicenseModelEnum.RegisteredCustomerName),
+                        RegisteredFileName = GetItem<string>(row, (int)LicenseModelEnum.RegisteredFileName),
+                        RowId = rowId,
+                        Status = status,
                         FileId = GetItem<string>(row, (int)LicenseModelEnum.FileId),
                         CustomerName = GetItem<string>(row, (int)LicenseModelEnum.CustomerName),
                         Password = GetItem<string>(row, (int)LicenseModelEnum.Password),
@@ -76,6 +122,8 @@ namespace CopyRightPDF.Core
                         LastAccess = GetItem<DateTime?>(row, (int)LicenseModelEnum.LastAccess),
                         MinVersion = GetItem<string>(row, (int)LicenseModelEnum.MinVersion),
                         ExpireDate = GetItem<DateTime?>(row, (int)LicenseModelEnum.ExpireDate),
+                        SpecifiedExpireDate = GetItem<DateTime?>(row, (int)LicenseModelEnum.SpecifiedExpireDate),
+                        ExpireDayCount = GetItem<int?>(row, (int)LicenseModelEnum.ExpireDayCount),
                         IsLocked = GetItem<bool>(row, (int)LicenseModelEnum.IsLocked),
                     });
                 }
@@ -149,7 +197,7 @@ namespace CopyRightPDF.Core
                 var value = items[(int)index];
 
                 if (typeof(T) == typeof(string)) return (T)value;
-                if (typeof(T) == typeof(int))
+                if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
                     int.TryParse(value.ToString(), out int intValue);
                     return (T)(object)intValue;

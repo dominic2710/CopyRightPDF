@@ -112,6 +112,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\StatusColorConverter.cs" />
+    <Compile Include="Converters\StatusToVisibilityConverter.cs" />
     <Compile Include="ICloseable.cs" />
     <Compile Include="Pages\LicenseInfoPage.xaml.cs">
       <DependentUpon>LicenseInfoPage.xaml</DependentUpon>

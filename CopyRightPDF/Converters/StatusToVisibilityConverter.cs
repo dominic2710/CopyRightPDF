@@ -4,27 +4,22 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace CopyRightPDF.Converters
 {
-    public class StatusColorConverter : IValueConverter
+    public class StatusToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             switch (value)
             {
                 case "Registered":
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ff6348"));
-                case "Approved":
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#27ae60"));
-                case "Opened":
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2980b9"));
-                case "Expired":
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#7f8c8d"));
+                    return Visibility.Visible;
                 default:
-                    return new SolidColorBrush(Colors.White);
+                    return Visibility.Hidden;
             }
         }
 

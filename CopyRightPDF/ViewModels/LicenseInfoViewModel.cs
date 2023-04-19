@@ -1,4 +1,6 @@
-﻿using CopyRightPDF.Core.Models;
+﻿using CopyRightPDF.Core;
+using CopyRightPDF.Core.Models;
+using CopyRightPDF.Utilities;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
@@ -6,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Input;
 
@@ -16,25 +19,56 @@ namespace CopyRightPDF.ViewModels
         public event EventHandler<EventArgs> RequestClose;
         #region Variable
         // Private fields
+        private string _registeredEmail;
+        private string _registeredPhoneNumber;
+        private string _registeredCustomerName;
+        private string _registeredFileName;
+        private string _fileId;
         private bool _isAddNew;
         private int _rowId;
         private string _status;
-        private string _fileId;
         private string _customerName;
         private string _password;
         private int _numberOfLimitDevice;
         private bool _preventPrint;
         private bool _preventSameOS;
         private bool _preventScreenshot;
+        private DateTime? _activatedDate;
         private int _numberOfActivatedDevice;
         private string _activatedDeviceMAC;
         private string _activatedOS;
         private DateTime? _lastAccess;
         private string _minVersion;
+        private int? _expireDayCount;
         private DateTime? _expireDate;
+        private DateTime? _specifiedExpireDate;
+        private bool _isNeverExpire;
+        private bool _isSpecifiedDate;
+        private bool _isExpireDayCount;
         #endregion
 
         #region Properties
+        public string RegisteredEmail
+        {
+            get { return _registeredEmail; }
+            set { _registeredEmail = value; OnPropertyChanged(nameof(RegisteredEmail)); }
+        }
+        public string RegisteredPhoneNumber
+        {
+            get { return _registeredPhoneNumber; }
+            set { _registeredPhoneNumber = value; OnPropertyChanged(nameof(RegisteredPhoneNumber)); }
+        }
+        public string RegisteredCustomerName
+        {
+            get { return _registeredCustomerName; }
+            set { _registeredCustomerName = value; OnPropertyChanged(nameof(RegisteredCustomerName)); }
+        }
+        public string RegisteredFileName
+        {
+            get { return _registeredFileName; }
+            set { _registeredFileName = value; OnPropertyChanged(nameof(RegisteredFileName)); }
+        }
+
         // Public properties
         public int RowId
         {
@@ -89,6 +123,12 @@ namespace CopyRightPDF.ViewModels
             set { _preventScreenshot = value; OnPropertyChanged(nameof(PreventScreenshot)); }
         }
 
+        public DateTime? ActivatedDate
+        {
+            get { return _activatedDate; }
+            set { _activatedDate = value; OnPropertyChanged(nameof(ActivatedDate)); }
+        }
+
         public int NumberOfActivatedDevice
         {
             get => _numberOfActivatedDevice;
@@ -119,10 +159,76 @@ namespace CopyRightPDF.ViewModels
             set { _minVersion = value; OnPropertyChanged(nameof(MinVersion)); }
         }
 
+        public int? ExpireDayCount
+        {
+            get { return _expireDayCount; }
+            set { _expireDayCount = value; OnPropertyChanged(nameof(ExpireDayCount)); }
+        }
+
         public DateTime? ExpireDate
         {
             get => _expireDate;
             set { _expireDate = value; OnPropertyChanged(nameof(ExpireDate)); }
+        }
+
+        public DateTime? SpecifiedExpireDate
+        {
+            get => _specifiedExpireDate;
+            set { _specifiedExpireDate = value; OnPropertyChanged(nameof(SpecifiedExpireDate)); }
+        }
+
+        public bool IsNeverExpire
+        {
+            get { return _isNeverExpire; }
+            set
+            {
+                _isNeverExpire = value;
+                OnPropertyChanged(nameof(IsNeverExpire));
+
+                if (_isNeverExpire)
+                {
+                    IsExpireDayCount = false;
+                    IsSpecifiedDate = false;
+                    ExpireDayCount = null;
+                    SpecifiedExpireDate = null;
+                }
+            }
+        }
+
+        public bool IsSpecifiedDate
+        {
+            get { return _isSpecifiedDate; }
+            set
+            {
+                _isSpecifiedDate = value;
+                OnPropertyChanged(nameof(IsSpecifiedDate));
+
+                if (_isSpecifiedDate)
+                {
+                    IsExpireDayCount = false;
+                    IsNeverExpire = false;
+                    ExpireDayCount = null;
+                    SpecifiedExpireDate = DateTime.Now.AddDays(30);
+                }
+            }
+        }
+
+        public bool IsExpireDayCount
+        {
+            get { return _isExpireDayCount; }
+            set
+            {
+                _isExpireDayCount = value;
+                OnPropertyChanged(nameof(IsExpireDayCount));
+
+                if (_isExpireDayCount)
+                {
+                    IsNeverExpire = false;
+                    IsSpecifiedDate = false;
+                    SpecifiedExpireDate = null;
+                    ExpireDayCount = 30;
+                }
+            }
         }
 
         public LicenseModel ReturnLicense { get; set; }
@@ -163,27 +269,14 @@ namespace CopyRightPDF.ViewModels
         #endregion  
 
         public LicenseInfoViewModel() { }
-        public LicenseInfoViewModel(LicenseModel license, bool isAddNew)
+        public LicenseInfoViewModel(LicenseModel license, bool isAddNew, CopyRightPDFDataProvider dataProvider)
         {
             InputLicense = license;
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(1));
             ReturnLicense = null;
             IsAddNew = isAddNew;
 
-            Status = license.Status;
-            FileId = license.FileId;
-            CustomerName = license.CustomerName;
-            Password = license.Password;
-            NumberOfLimitDevice = license.NumberOfLimitDevice;
-            PreventPrint = license.PreventPrint;
-            PreventSameOS = license.PreventSameOS;
-            PreventScreenshot = license.PreventScreenshot;
-            NumberOfActivatedDevice = license.NumberOfActivatedDevice;
-            ActivatedDeviceMAC = license.ActivatedDeviceMAC;
-            ActivatedOS = license.ActivatedOS;
-            LastAccess = license.LastAccess;
-            MinVersion = license.MinVersion;
-            ExpireDate = license.ExpireDate;
+            Init(license);
 
             ReloadCommand = new RelayCommand<object>(p =>
             {
@@ -196,20 +289,7 @@ namespace CopyRightPDF.ViewModels
                     if (result == MessageBoxResult.No) return;
                 }
 
-                Status = license.Status;
-                FileId = license.FileId;
-                CustomerName = license.CustomerName;
-                Password = license.Password;
-                NumberOfLimitDevice = license.NumberOfLimitDevice;
-                PreventPrint = license.PreventPrint;
-                PreventSameOS = license.PreventSameOS;
-                PreventScreenshot = license.PreventScreenshot;
-                NumberOfActivatedDevice = license.NumberOfActivatedDevice;
-                ActivatedDeviceMAC = license.ActivatedDeviceMAC;
-                ActivatedOS = license.ActivatedOS;
-                LastAccess = license.LastAccess;
-                MinVersion = license.MinVersion;
-                ExpireDate = license.ExpireDate;
+                Init(license);
 
                 MessageQueue.Enqueue("Reloaded");
             });
@@ -226,8 +306,33 @@ namespace CopyRightPDF.ViewModels
                     return;
                 }
 
-                var result = MessageBox.Show("Save changes?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var result = MessageBox.Show("Save changes and approve license?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.No) return;
+
+                //Approve license
+                WaitingForExecUtility.Instance.DoWork(() =>
+                {
+                    try
+                    {
+                        license.Status = "Approving";
+                        if (IsAddNew)
+                        {
+                            dataProvider.AddLicense(license);
+                        }
+                        else
+                        {
+                            dataProvider.ApproveLicense(license);
+                        }
+                        MessageQueue.Enqueue("Approved license");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageQueue.Enqueue(ex.Message);
+                        return;
+                    }
+                }, "Approving");
+
+                //Send mail here
 
                 ReturnLicense = new LicenseModel
                 {
@@ -263,6 +368,37 @@ namespace CopyRightPDF.ViewModels
                 return "Min version must be input";
 
             return "";
+        }
+
+        private void Init(LicenseModel license)
+        {
+            RegisteredCustomerName = license.RegisteredCustomerName;
+            RegisteredEmail = license.RegisteredEmail;
+            RegisteredFileName = license.RegisteredFileName;
+            RegisteredPhoneNumber = license.RegisteredPhoneNumber;
+            Status = license.Status;
+            FileId = license.FileId;
+            CustomerName = license.CustomerName;
+            Password = license.Password;
+            NumberOfLimitDevice = license.NumberOfLimitDevice;
+            PreventPrint = license.PreventPrint;
+            PreventSameOS = license.PreventSameOS;
+            PreventScreenshot = license.PreventScreenshot;
+            ActivatedDate = license.ActivatedDate;
+            NumberOfActivatedDevice = license.NumberOfActivatedDevice;
+            ActivatedDeviceMAC = license.ActivatedDeviceMAC;
+            ActivatedOS = license.ActivatedOS;
+            LastAccess = license.LastAccess;
+            MinVersion = license.MinVersion;
+            ExpireDate = license.ExpireDate;
+            SpecifiedExpireDate = license.SpecifiedExpireDate;
+            ExpireDayCount = license.ExpireDayCount;
+            if (SpecifiedExpireDate != null)
+                IsSpecifiedDate = true;
+            else if (ExpireDayCount != null && ExpireDayCount != 0)
+                IsExpireDayCount = true;
+            else
+                IsNeverExpire = true;
         }
     }
 }

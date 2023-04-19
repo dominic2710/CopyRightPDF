@@ -9,6 +9,10 @@ namespace CopyRightPDF.Core.Models
     public class LicenseModel : BaseModel
     {
         // Private fields
+        private string _registeredEmail;
+        private string _registeredPhoneNumber;
+        private string _registeredCustomerName;
+        private string _registeredFileName;
         private int _rowId;
         private string _status;
         private string _fileId;
@@ -18,14 +22,37 @@ namespace CopyRightPDF.Core.Models
         private bool _preventPrint;
         private bool _preventSameOS;
         private bool _preventScreenshot;
+        private DateTime? _activatedDate;
         private int _numberOfActivatedDevice;
         private string _activatedDeviceMAC;
         private string _activatedOS;
         private DateTime? _lastAccess;
         private string _minVersion;
         private DateTime? _expireDate;
+        private DateTime? _specifiedExpireDate;
+        private int? _expireDayCount;
         private bool _isLocked;
         // Public properties
+        public string RegisteredEmail
+        {
+            get { return _registeredEmail; }
+            set { _registeredEmail = value; OnPropertyChanged(nameof(RegisteredEmail)); }
+        }
+        public string RegisteredPhoneNumber
+        {
+            get { return _registeredPhoneNumber; }
+            set { _registeredPhoneNumber = value; OnPropertyChanged(nameof(RegisteredPhoneNumber)); }
+        }
+        public string RegisteredCustomerName
+        {
+            get { return _registeredCustomerName; }
+            set { _registeredCustomerName = value; OnPropertyChanged(nameof(RegisteredCustomerName)); }
+        }
+        public string RegisteredFileName
+        {
+            get { return _registeredFileName; }
+            set { _registeredFileName = value; OnPropertyChanged(nameof(RegisteredFileName)); }
+        }
         public int RowId
         {
             get => _rowId;
@@ -91,6 +118,30 @@ namespace CopyRightPDF.Core.Models
             set { _expireDate = value; OnPropertyChanged(nameof(ExpireDate)); }
         }
 
+        public DateTime? SpecifiedExpireDate
+        {
+            get { return _specifiedExpireDate; }
+            set
+            {
+                _specifiedExpireDate = value; OnPropertyChanged(nameof(SpecifiedExpireDate));
+            }
+        }
+
+        public int? ExpireDayCount
+        {
+            get { return _expireDayCount; }
+            set
+            {
+                _expireDayCount = value; OnPropertyChanged(nameof(ExpireDayCount));
+            }
+        }
+
+        public DateTime? ActivatedDate
+        {
+            get { return _activatedDate; }
+            set { _activatedDate = value; OnPropertyChanged(nameof(ActivatedDate)); }
+        }
+
         public int NumberOfActivatedDevice
         {
             get => _numberOfActivatedDevice;
@@ -125,7 +176,30 @@ namespace CopyRightPDF.Core.Models
         {
             get
             {
-                return new List<object>() { "=ROW() - 1", FileId, CustomerName, Password, NumberOfLimitDevice, PreventPrint, PreventSameOS, PreventScreenshot, MinVersion, ExpireDate, Status, NumberOfActivatedDevice, ActivatedDeviceMAC, ActivatedOS, LastAccess, IsLocked };
+                return new List<object>() { RegisteredEmail,
+                                            RegisteredPhoneNumber,
+                                            RegisteredCustomerName,
+                                            RegisteredFileName,
+                                            FileId,
+                                            "=ROW() - 1",
+                                            CustomerName,
+                                            Password,
+                                            NumberOfLimitDevice,
+                                            PreventPrint,
+                                            PreventSameOS,
+                                            PreventScreenshot,
+                                            MinVersion,
+                                            ExpireDate,
+                                            SpecifiedExpireDate,
+                                            ExpireDayCount,
+                                            Status,
+                                            ActivatedDate,
+                                            NumberOfActivatedDevice,
+                                            ActivatedDeviceMAC,
+                                            ActivatedOS,
+                                            LastAccess,
+                                            IsLocked
+                                        };
             }
         }
 
@@ -133,15 +207,26 @@ namespace CopyRightPDF.Core.Models
         {
             get
             {
-                return new List<object>() { Status, NumberOfActivatedDevice, ActivatedDeviceMAC, ActivatedOS, LastAccess, IsLocked };
+                return new List<object>() { Status,
+                                            ActivatedDate,
+                                            NumberOfActivatedDevice,
+                                            ActivatedDeviceMAC,
+                                            ActivatedOS,
+                                            LastAccess,
+                                            IsLocked
+                                        };
             }
         }
     }
 
     public enum LicenseModelEnum
     {
-        RowId = 0,
+        RegisteredEmail = 0,
+        RegisteredPhoneNumber,
+        RegisteredCustomerName,
+        RegisteredFileName,
         FileId,
+        RowId,
         CustomerName,
         Password,
         NumberOfLimitDevice,
@@ -150,7 +235,10 @@ namespace CopyRightPDF.Core.Models
         PreventScreenshot,
         MinVersion,
         ExpireDate,
+        SpecifiedExpireDate,
+        ExpireDayCount,
         Status,
+        ActivatedDate,
         NumberOfActivatedDevice,
         ActivatedDeviceMAC,
         ActivatedOS,

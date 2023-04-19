@@ -219,7 +219,11 @@
                     FontSize="14"
                     Foreground="White"
                     Style="{StaticResource MaterialDesignFilterChipPrimaryListBox}">
-                    <ListBoxItem Content="New" IsSelected="{Binding IsFilterStatusNew}" />
+                    <ListBoxItem
+                        Content="Registered"
+                        Foreground="#ff6348"
+                        IsSelected="{Binding IsFilterStatusRegistered}" />
+                    <ListBoxItem Content="Approved" IsSelected="{Binding IsFilterStatusApproved}" />
                     <ListBoxItem Content="Opened" IsSelected="{Binding IsFilterStatusOpened}" />
                     <ListBoxItem Content="Expired" IsSelected="{Binding IsFilterStatusExpired}" />
                 </ListBox>
@@ -258,18 +262,46 @@
                     <KeyBinding Key="Delete" Command="{Binding DeleteLicenseCommand}" />
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridTextColumn
+                    <DataGridTemplateColumn Header="Status" HeaderStyle="{StaticResource DataGridHeaderCenter}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="DataGridCell">
+                                <Grid>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{Binding Status, Converter={StaticResource StatusColorConverter}}"
+                                        Text="{Binding Status}" />
+                                    <Button
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Background="#ff6348"
+                                        BorderBrush="#ff6348"
+                                        Command="{Binding DataContext.ApproveLicenseCommand, ElementName=dtgLicenses}"
+                                        Content="Approve"
+                                        Foreground="White"
+                                        Style="{StaticResource MaterialDesignFlatDarkBgButton}"
+                                        Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <!--<DataGridTextColumn
                         Binding="{Binding Status}"
                         ElementStyle="{StaticResource ElementStyleVerticalCenter}"
                         Header="Status"
-                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />-->
                     <DataGridTextColumn
-                        Binding="{Binding CustomerName}"
+                        Binding="{Binding RegisteredCustomerName}"
                         ElementStyle="{StaticResource ElementStyleVerticalCenter}"
                         Header="Customer"
                         HeaderStyle="{StaticResource DataGridHeaderCenter}" />
                     <DataGridTextColumn
-                        Binding="{Binding Password}"
+                        Binding="{Binding RegisteredEmail}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Email"
+                        HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                    <DataGridTextColumn
+                        Binding="{Binding RegisteredPhoneNumber}"
                         ElementStyle="{StaticResource ElementStyleVerticalCenter}"
                         Header="Password"
                         HeaderStyle="{StaticResource DataGridHeaderCenter}" />
@@ -338,51 +370,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <!--<DataGridCheckBoxColumn
-                    Binding="{Binding PreventPrint}"
-                    Header="Prevent&#x0a;  Print"
-                    HeaderStyle="{StaticResource DataGridHeaderCenter}">
-                    <DataGridCheckBoxColumn.ElementStyle>
-                        <Style BasedOn="{StaticResource MaterialDesignActionCheckBox}" TargetType="CheckBox">
-                            <Setter Property="HorizontalAlignment" Value="Center" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="IsEnabled" Value="False" />
-                            <Setter Property="Visibility" Value="{Binding PreventPrint, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <Setter Property="Background" Value="#d35400" />
-                            <Setter Property="Foreground" Value="White" />
-                        </Style>
-                    </DataGridCheckBoxColumn.ElementStyle>
-                </DataGridCheckBoxColumn>
-                <DataGridCheckBoxColumn
-                    Binding="{Binding PreventSameOS}"
-                    Header=" Prevent&#x0a;Same OS"
-                    HeaderStyle="{StaticResource DataGridHeaderCenter}">
-                    <DataGridCheckBoxColumn.ElementStyle>
-                        <Style BasedOn="{StaticResource MaterialDesignActionCheckBox}" TargetType="CheckBox">
-                            <Setter Property="HorizontalAlignment" Value="Center" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="IsEnabled" Value="False" />
-                            <Setter Property="Visibility" Value="{Binding PreventSameOS, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <Setter Property="Background" Value="#2980b9" />
-                            <Setter Property="Foreground" Value="White" />
-                        </Style>
-                    </DataGridCheckBoxColumn.ElementStyle>
-                </DataGridCheckBoxColumn>
-                <DataGridCheckBoxColumn
-                    Binding="{Binding PreventScreenshot}"
-                    Header="   Prevent&#x0a;Screenshot"
-                    HeaderStyle="{StaticResource DataGridHeaderCenter}">
-                    <DataGridCheckBoxColumn.ElementStyle>
-                        <Style BasedOn="{StaticResource MaterialDesignActionCheckBox}" TargetType="CheckBox">
-                            <Setter Property="HorizontalAlignment" Value="Center" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="IsEnabled" Value="False" />
-                            <Setter Property="Visibility" Value="{Binding PreventScreenshot, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <Setter Property="Background" Value="#27ae60" />
-                            <Setter Property="Foreground" Value="White" />
-                        </Style>
-                    </DataGridCheckBoxColumn.ElementStyle>
-                </DataGridCheckBoxColumn>-->
+
                     <DataGridTextColumn
                         Binding="{Binding ExpireDate, StringFormat=dd/MM/yyyy}"
                         ElementStyle="{StaticResource ElementStyleVerticalCenter}"
@@ -393,6 +381,11 @@
                         ElementStyle="{StaticResource ElementStyleVerticalCenter}"
                         Header="Min Version"
                         HeaderStyle="{StaticResource DataGridHeaderCenter}" />
+                    <DataGridTextColumn
+                        Binding="{Binding ActivatedDate}"
+                        ElementStyle="{StaticResource ElementStyleVerticalCenter}"
+                        Header="Activated Date"
+                        HeaderStyle="{StaticResource DataGridHeaderTransactionColumn}" />
                     <DataGridTextColumn
                         Binding="{Binding NumberOfActivatedDevice}"
                         ElementStyle="{StaticResource ElementStyleVerticalCenter}"

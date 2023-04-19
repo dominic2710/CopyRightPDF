@@ -17,6 +17,7 @@
             </ResourceDictionary.MergedDictionaries>
             <converters:StatusColorConverter x:Key="StatusColorConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <converters:StatusToVisibilityConverter x:Key="StatusToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
