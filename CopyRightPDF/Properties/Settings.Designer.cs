@@ -61,15 +61,6 @@ namespace CopyRightPDF.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\PROGRAMINGS\\GitRepos\\CopyRightPDF\\Test")]
-        public string OutputPath {
-            get {
-                return ((string)(this["OutputPath"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("smtp.gmail.com")]
         public string Host {
             get {
@@ -119,6 +110,24 @@ namespace CopyRightPDF.Properties {
         public string Body {
             get {
                 return ((string)(this["Body"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\PROGRAMINGS\\GitRepos\\CopyRightPDF\\Test\\aa")]
+        public string OutputPath {
+            get {
+                return ((string)(this["OutputPath"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Thanh Tuấn")]
+        public string DisplayName {
+            get {
+                return ((string)(this["DisplayName"]));
             }
         }
     }

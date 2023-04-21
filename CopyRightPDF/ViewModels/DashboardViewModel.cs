@@ -390,6 +390,7 @@ namespace CopyRightPDF.ViewModels
                     mailProvider.SendApproveMail(Properties.Settings.Default.Host,
                                                  Properties.Settings.Default.Port,
                                                  Properties.Settings.Default.Username,
+                                                 Properties.Settings.Default.DisplayName,
                                                  Properties.Settings.Default.Password,
                                                  Properties.Settings.Default.Subject,
                                                  Properties.Settings.Default.Body,

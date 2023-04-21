@@ -17,6 +17,7 @@ namespace CopyRightPDF.Core
         public void SendApproveMail(string smtpServer,
                                     int port,
                                     string userName,
+                                    string displayName,
                                     string password,
                                     string subject,
                                     string mailBody,
@@ -35,7 +36,7 @@ namespace CopyRightPDF.Core
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress(userName),
+                From = new MailAddress(userName, displayName),
                 Subject = subject,
                 Body = html,
                 IsBodyHtml = true,
