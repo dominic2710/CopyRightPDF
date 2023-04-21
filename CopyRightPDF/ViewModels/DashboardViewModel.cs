@@ -21,8 +21,6 @@ namespace CopyRightPDF.ViewModels
     {
         #region Variable
         private List<DocumentModel> documents;
-        private ObservableCollection<DocumentModel> documentsObservable;
-        private ObservableCollection<LicenseModel> licensesObservable;
         private DocumentModel selectedDocument;
         private LicenseModel selectedLicense;
         private CopyRightPDFDataProvider dataProvider;

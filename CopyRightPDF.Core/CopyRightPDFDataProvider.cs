@@ -11,7 +11,7 @@ namespace CopyRightPDF.Core
     public class CopyRightPDFDataProvider
     {
         private GoogleSheetDataAccess dataAccess;
-        string spreadSheetId, documentSheetName, licenseSheetName;
+        string documentSheetName, licenseSheetName;
         public CopyRightPDFDataProvider(Stream fs, string spreadSheetId, string documentSheetName, string licenseSheetName)
         {
             dataAccess = new GoogleSheetDataAccess(fs, spreadSheetId);

@@ -231,7 +231,7 @@ namespace CopyRightPDF.Core.Models
             {
                 ActivatedDate = ActivatedDate,
                 NumberOfActivatedDevice = NumberOfActivatedDevice,
-                ActivatedDeviceMAC = ActivatedOS,
+                ActivatedDeviceMAC = ActivatedDeviceMAC,
                 ActivatedOS = ActivatedOS,
                 LastAccess = LastAccess,
                 IsLocked = IsLocked,
